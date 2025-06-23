@@ -280,7 +280,15 @@ Os logs detalhados ficam disponíveis em:
 
 ## 📄 **Licença**
 
-Este plugin é desenvolvido para facilitar o acesso aos dados públicos de monitoramento ambiental brasileiro.
+Este plugin é distribuído sob a **GNU General Public License v3.0 (GPL-3.0)**.
+
+- ✅ **Software Livre**: Você pode usar, modificar e distribuir livremente
+- ✅ **Código Aberto**: Código fonte totalmente disponível
+- ✅ **Copyleft**: Modificações devem manter a mesma licença
+
+Para detalhes completos, consulte o arquivo [LICENSE](LICENSE) neste repositório.
+
+Este plugin é desenvolvido para facilitar o acesso aos dados públicos de monitoramento ambiental brasileiro, respeitando as licenças e termos de uso das instituições fornecedoras dos dados.
 
 ## 🤝 **Contribuições**
 
