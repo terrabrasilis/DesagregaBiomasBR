@@ -220,6 +220,9 @@ class DesagregaBiomasBRDialog(QDialog):
         main_layout.addLayout(buttons_layout)
         
         self.setLayout(main_layout)
+        
+        # Inicializa mensagem inicial usando sistema estruturado de notas
+        self.update_notes("💡 DesagregaBiomasBR é um plugin que facilita o acesso e processamento de dados dos principais sistemas de monitoramento ambiental brasileiro: 🌲 PRODES (desmatamento), 🚨 DETER (alertas), 🔥 QUEIMADAS (áreas queimadas) e 🏞️ TERRACLASS (uso da terra).", "config")
 
     def reset_all_variables(self):
         """Reset COMPLETO de todas as variáveis para garantir estado limpo"""
@@ -394,7 +397,7 @@ class DesagregaBiomasBRDialog(QDialog):
         self.notes_text = QTextEdit()
         self.notes_text.setMaximumHeight(80)
         self.notes_text.setReadOnly(True)
-        self.notes_text.setPlainText("💡 DesagregaBiomasBR é um plugin que facilita o acesso e processamento de dados dos principais sistemas de monitoramento ambiental brasileiro: 🌲 PRODES (desmatamento), 🚨 DETER (alertas), 🔥 QUEIMADAS (áreas queimadas) e 🏞️ TERRACLASS (uso da terra).")
+        # Mensagem inicial será definida via update_notes para consistência
         
         notes_layout.addWidget(self.notes_text)
         notes_frame.setLayout(notes_layout)
@@ -3882,7 +3885,7 @@ class DesagregaBiomasBRDialog(QDialog):
             self.radio_draw.setVisible(True)
             
             if not theme:
-                self.update_notes("💡 DesagregaBiomasBR é um plugin que facilita o acesso e processamento de dados dos principais sistemas de monitoramento ambiental brasileiro: 🌲 PRODES (desmatamento), 🚨 DETER (alertas), 🔥 QUEIMADAS (áreas queimadas) e 🏞️ TERRACLASS (uso da terra).")
+                self.update_notes("💡 DesagregaBiomasBR é um plugin que facilita o acesso e processamento de dados dos principais sistemas de monitoramento ambiental brasileiro: 🌲 PRODES (desmatamento), 🚨 DETER (alertas), 🔥 QUEIMADAS (áreas queimadas) e 🏞️ TERRACLASS (uso da terra).", "config")
             else:
                 self.update_comprehensive_notes_responsive()
             
