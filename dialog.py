@@ -83,15 +83,9 @@ class DesagregaBiomasBRDialog(QDialog):
         # SEMPRE reset completo de todas as variáveis
         self.reset_all_variables()
         
-        # Shapefile IBGE (local ou cache) para limites
+        # Shapefile IBGE (local ou cache) para limites - inicializado depois
         self.ibge_shapefile_name = None
         self.ibge_shapefile_path = None
-        
-        # Garante que shapefile IBGE esteja disponível
-        if not self.ensure_ibge_shapefile_available():
-            # Fallback para busca local tradicional
-            self.ibge_shapefile_name = self.get_ibge_shapefile_name()
-            self.ibge_shapefile_path = os.path.join(os.path.dirname(__file__), 'shapefile', f'{self.ibge_shapefile_name}.shp')
         
         # Configurações dos temas
         self.biome_options = {
@@ -197,6 +191,12 @@ class DesagregaBiomasBRDialog(QDialog):
         # Sistema de configuração dinâmica
         self.config_data = None
         self.load_dynamic_config()
+        
+        # AGORA garante que shapefile IBGE esteja disponível (APÓS network_manager e config_data)
+        if not self.ensure_ibge_shapefile_available():
+            # Fallback para busca local tradicional
+            self.ibge_shapefile_name = self.get_ibge_shapefile_name()
+            self.ibge_shapefile_path = os.path.join(os.path.dirname(__file__), 'shapefile', f'{self.ibge_shapefile_name}.shp')
         
         # Setup da UI
         self.setupUi()
@@ -459,16 +459,27 @@ class DesagregaBiomasBRDialog(QDialog):
             from qgis.PyQt.QtCore import QUrl, QEventLoop, QTimer
             from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
             
+            print(f"🔧 DEBUG: Iniciando download_ibge_shapefile, cache_dir: {cache_dir}")
+            
             # Obtém URL do shapefile do JSON
             shapefile_url = None
             if self.config_data and 'ibge_shapefile' in self.config_data:
                 shapefile_url = self.config_data['ibge_shapefile'].get('url')
+                print(f"🔧 DEBUG: URL do JSON: {shapefile_url}")
+            else:
+                print(f"🔧 DEBUG: config_data não disponível ou sem ibge_shapefile")
             
             if not shapefile_url:
                 # Fallback para URL hardcoded
                 shapefile_url = "https://github.com/geodenilson/DesagregaBiomasBR/raw/main/shapefile/BC250,%202023.zip"
+                print(f"🔧 DEBUG: Usando URL fallback: {shapefile_url}")
             
             print(f"🌐 DEBUG: Baixando de: {shapefile_url}")
+            
+            # Verifica se network_manager existe
+            if not hasattr(self, 'network_manager') or not self.network_manager:
+                print(f"❌ DEBUG: network_manager não disponível")
+                return False
             
             # Download do ZIP
             request = QNetworkRequest(QUrl(shapefile_url))
