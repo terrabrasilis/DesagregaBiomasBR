@@ -490,12 +490,11 @@ class DesagregaBiomasBRDialog(QDialog):
                 return False
             
             # Download do ZIP - CODIFICA URL CORRETAMENTE
-            from urllib.parse import quote
             
-            # Codifica apenas a parte do nome do arquivo
-            url_parts = shapefile_url.split('/')
-            url_parts[-1] = quote(url_parts[-1])  # Codifica só o nome do arquivo
-            encoded_url = '/'.join(url_parts)
+            # Codifica apenas caracteres problemáticos específicos
+            encoded_url = shapefile_url.replace(',', '%2C').replace(' ', '%20')
+            # Vírgula: , → %2C
+            # Espaço:   → %20
             
             print(f"🔧 DEBUG: URL original: {shapefile_url}")
             print(f"🔧 DEBUG: URL codificada: {encoded_url}")
