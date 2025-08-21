@@ -405,44 +405,80 @@ class DesagregaBiomasBRDialog(QDialog):
             from datetime import datetime, timedelta
             import zipfile
             import shutil
+            from qgis.core import QgsMessageLog, Qgis
+            
+            print("🔧 DEBUG: Verificando disponibilidade do shapefile IBGE...")
+            QgsMessageLog.logMessage("🔧 Verificando disponibilidade do shapefile IBGE...", "DesagregaBiomasBR", Qgis.Info)
             
             # Verifica se existe shapefile local primeiro
             local_shapefile_dir = os.path.join(self.plugin_dir, 'shapefile')
             if os.path.exists(local_shapefile_dir):
                 shp_files = [f for f in os.listdir(local_shapefile_dir) if f.endswith('.shp')]
                 if shp_files:
-                    print("✅ DEBUG: Shapefile IBGE local encontrado")
+                    print("✅ DEBUG: Shapefile IBGE local encontrado - usando local")
+                    QgsMessageLog.logMessage("✅ Shapefile IBGE local encontrado - usando local", "DesagregaBiomasBR", Qgis.Info)
+                    self.ibge_shapefile_name = shp_files[0][:-4]
+                    self.ibge_shapefile_path = os.path.join(local_shapefile_dir, shp_files[0])
                     return True
+                else:
+                    print("🔧 DEBUG: Pasta shapefile existe mas está vazia")
+                    QgsMessageLog.logMessage("🔧 Pasta shapefile existe mas está vazia", "DesagregaBiomasBR", Qgis.Warning)
+            else:
+                print("🔧 DEBUG: Pasta shapefile local não existe")
+                QgsMessageLog.logMessage("🔧 Pasta shapefile local não existe", "DesagregaBiomasBR", Qgis.Info)
             
             # Se não existe local, usa sistema de cache
             cache_dir = os.path.join(tempfile.gettempdir(), 'DesagregaBiomasBR', 'shapefile')
+            print(f"🔧 DEBUG: Cache dir: {cache_dir}")
+            QgsMessageLog.logMessage(f"🔧 Cache dir: {cache_dir}", "DesagregaBiomasBR", Qgis.Info)
             os.makedirs(cache_dir, exist_ok=True)
             
             # Verifica cache do shapefile
             cache_shapefile_dir = os.path.join(cache_dir, 'extracted')
+            print(f"🔧 DEBUG: Cache shapefile dir: {cache_shapefile_dir}")
             cache_valid = False
             
             if os.path.exists(cache_shapefile_dir):
+                print("🔧 DEBUG: Cache dir existe, verificando conteúdo...")
+                QgsMessageLog.logMessage("🔧 Cache dir existe, verificando conteúdo...", "DesagregaBiomasBR", Qgis.Info)
                 # Verifica se tem .shp e se cache é válido (30 dias)
                 shp_files = [f for f in os.listdir(cache_shapefile_dir) if f.endswith('.shp')]
+                print(f"🔧 DEBUG: Arquivos .shp no cache: {shp_files}")
+                
                 if shp_files:
                     cache_time = datetime.fromtimestamp(os.path.getmtime(cache_shapefile_dir))
-                    if datetime.now() - cache_time < timedelta(days=30):
+                    age_days = (datetime.now() - cache_time).days
+                    print(f"🔧 DEBUG: Cache idade: {age_days} dias (limite: 30)")
+                    
+                    if age_days < 30:
                         cache_valid = True
-                        print("🔧 DEBUG: Usando shapefile IBGE do cache")
+                        print("✅ DEBUG: Usando shapefile IBGE do cache (válido)")
+                        QgsMessageLog.logMessage("✅ Usando shapefile IBGE do cache (válido)", "DesagregaBiomasBR", Qgis.Info)
                         # Atualiza o caminho para o cache
                         self.ibge_shapefile_name = shp_files[0][:-4]  # Remove .shp
                         self.ibge_shapefile_path = os.path.join(cache_shapefile_dir, shp_files[0])
                         return True
+                    else:
+                        print("⚠️ DEBUG: Cache expirado (>30 dias)")
+                        QgsMessageLog.logMessage("⚠️ Cache expirado (>30 dias)", "DesagregaBiomasBR", Qgis.Warning)
+                else:
+                    print("⚠️ DEBUG: Cache dir existe mas sem arquivos .shp")
+                    QgsMessageLog.logMessage("⚠️ Cache dir existe mas sem arquivos .shp", "DesagregaBiomasBR", Qgis.Warning)
+            else:
+                print("🔧 DEBUG: Cache dir não existe")
+                QgsMessageLog.logMessage("🔧 Cache dir não existe", "DesagregaBiomasBR", Qgis.Info)
             
             if not cache_valid:
-                print("🌐 DEBUG: Baixando shapefile IBGE atualizado...")
+                print("🌐 DEBUG: Iniciando download do shapefile IBGE...")
+                QgsMessageLog.logMessage("🌐 Iniciando download do shapefile IBGE...", "DesagregaBiomasBR", Qgis.Info)
                 success = self.download_ibge_shapefile(cache_dir)
                 if success:
                     print("✅ DEBUG: Shapefile IBGE baixado e extraído com sucesso")
+                    QgsMessageLog.logMessage("✅ Shapefile IBGE baixado e extraído com sucesso", "DesagregaBiomasBR", Qgis.Info)
                     return True
                 else:
                     print("❌ DEBUG: Falha no download do shapefile IBGE")
+                    QgsMessageLog.logMessage("❌ Falha no download do shapefile IBGE", "DesagregaBiomasBR", Qgis.Critical)
                     return False
             
             return cache_valid
@@ -475,8 +511,8 @@ class DesagregaBiomasBRDialog(QDialog):
                 print(f"🔧 DEBUG: config_data não disponível ou sem ibge_shapefile")
             
             if not shapefile_url:
-                # Fallback para URL hardcoded
-                shapefile_url = "https://github.com/geodenilson/DesagregaBiomasBR/raw/main/shapefile/BC250,%202023.zip"
+                # Fallback para URL hardcoded (AGORA NA RAIZ)
+                shapefile_url = "https://github.com/geodenilson/DesagregaBiomasBR/raw/main/BC250,%202023.zip"
                 QgsMessageLog.logMessage(f"🔧 Usando URL fallback: {shapefile_url}", "DesagregaBiomasBR", Qgis.Info)
                 print(f"🔧 DEBUG: Usando URL fallback: {shapefile_url}")
             
@@ -525,6 +561,8 @@ class DesagregaBiomasBRDialog(QDialog):
             if timer.isActive():
                 timer.stop()
                 print(f"🔧 DEBUG: Download finalizado, erro: {reply.error()}")
+                print(f"🔧 DEBUG: HTTP Status: {reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)}")
+                print(f"🔧 DEBUG: Content-Type: {reply.rawHeader(b'Content-Type').data().decode()}")
                 
                 if reply.error() == QNetworkReply.NoError:
                     zip_data = reply.readAll().data()
@@ -578,6 +616,11 @@ class DesagregaBiomasBRDialog(QDialog):
                 else:
                     print(f"❌ DEBUG: Erro no download: {reply.error()} - {reply.errorString()}")
                     print(f"❌ DEBUG: HTTP Status: {reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)}")
+                    print(f"❌ DEBUG: Redirect URL: {reply.attribute(QNetworkRequest.RedirectionTargetAttribute)}")
+                    print(f"❌ DEBUG: Response headers:")
+                    for header in reply.rawHeaderList():
+                        value = reply.rawHeader(header).data().decode()
+                        print(f"❌ DEBUG:   {header.data().decode()}: {value}")
             else:
                 print("❌ DEBUG: Timeout no download do shapefile (5 minutos)")
                 reply.abort()
