@@ -1,0 +1,126 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2024-01-15",
+  "description": "Configurações dinâmicas para o plugin DesagregaBiomasBR - Mantém URLs, biomas, anos e classes atualizados",
+  
+  "biomas": {
+    "PRODES": ["Amazônia", "Amazônia Legal", "Cerrado", "Caatinga", "Pantanal", "Pampa", "Mata Atlântica"],
+    "DETER": ["Cerrado", "Amazônia Legal"],
+    "TERRACLASS": ["Amazônia", "Cerrado"],
+    "ÁREA QUEIMADA": ["Amazônia", "Amazônia Legal", "Cerrado", "Caatinga", "Pantanal", "Pampa", "Mata Atlântica"]
+  },
+  
+  "prodes": {
+    "anos_incrementais": {
+      "Cerrado": [2002, 2004, 2006, 2007, 2008, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+      "Pantanal": [2004, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
+      "Pampa": [2004, 2006, 2007, 2008, 2010, 2011, 2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
+      "Mata Atlântica": [2004, 2006, 2008, 2010, 2011, 2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
+      "Caatinga": [2004, 2006, 2008, 2010, 2011, 2013, 2014, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
+      "Amazônia": [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
+      "Amazônia Legal": [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
+    },
+    "anos_acumulados": {
+      "Cerrado": [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+      "Pantanal": [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+      "Pampa": [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+      "Mata Atlântica": [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+      "Caatinga": [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+      "Amazônia": [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+      "Amazônia Legal": [2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+    },
+    "anos_base": {
+      "Cerrado": 2000,
+      "Pantanal": 2000,
+      "Pampa": 2000,
+      "Mata Atlântica": 2000,
+      "Caatinga": 2000,
+      "Amazônia": 2007,
+      "Amazônia Legal": 2007
+    },
+    "urls": {
+      "Pantanal": {
+        "accumulated": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pantanal-nb/accumulated_deforestation_2000/ows",
+        "yearly": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pantanal-nb/yearly_deforestation/ows"
+      },
+      "Amazônia": {
+        "accumulated": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-amazon-nb/accumulated_deforestation_2007_biome/ows",
+        "yearly": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-amazon-nb/yearly_deforestation_biome/ows"
+      },
+      "Cerrado": {
+        "accumulated": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-cerrado-nb/accumulated_deforestation_2000/ows",
+        "yearly": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-cerrado-nb/yearly_deforestation/ows"
+      },
+      "Pampa": {
+        "accumulated": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pampa-nb/accumulated_deforestation_2000/ows",
+        "yearly": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pampa-nb/yearly_deforestation/ows"
+      },
+      "Caatinga": {
+        "accumulated": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-caatinga-nb/accumulated_deforestation_2000/ows",
+        "yearly": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-caatinga-nb/yearly_deforestation/ows"
+      },
+      "Mata Atlântica": {
+        "accumulated": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-mata-atlantica-nb/accumulated_deforestation_2000/ows",
+        "yearly": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-mata-atlantica-nb/yearly_deforestation/ows"
+      },
+      "Amazônia Legal": {
+        "accumulated": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-legal-amz/accumulated_deforestation_2007/ows",
+        "yearly": "https://terrabrasilis.dpi.inpe.br/geoserver/prodes-legal-amz/yearly_deforestation/ows"
+      }
+    }
+  },
+  
+  "deter": {
+    "datas_inicio": {
+      "Cerrado": "2018-05-01",
+      "Amazônia Legal": "2016-08-02"
+    },
+    "classes": {
+      "Cerrado": ["DESMATAMENTO_CR"],
+      "Amazônia Legal": [
+        "CICATRIZ_DE_QUEIMADA",
+        "CORTE_SELETIVO",
+        "CS_DESORDENADO",
+        "CS_GEOMETRICO",
+        "DEGRADACAO",
+        "DESMATAMENTO_CR",
+        "DESMATAMENTO_VEG",
+        "MINERACAO"
+      ]
+    },
+    "typenames": {
+      "Cerrado": "deter-cerrado-nb:deter_cerrado",
+      "Amazônia Legal": "deter-amz:deter_amz"
+    },
+    "urls": {
+      "Cerrado": "https://terrabrasilis.dpi.inpe.br/geoserver/deter-cerrado-nb/deter_cerrado/ows",
+      "Amazônia Legal": "https://terrabrasilis.dpi.inpe.br/geoserver/deter-amz/deter_amz/ows"
+    }
+  },
+  
+  "terraclass": {
+    "anos": {
+      "Amazônia": [2008, 2010, 2012, 2014, 2018, 2020, 2022],
+      "Cerrado": [2018, 2020, 2022]
+    },
+    "urls": {
+      "base": "https://www.terraclass.gov.br/helpers/terraclass_data4download_2024/V/",
+      "municipal": "municipal/{uf_lower}/{bioma}.{ano}.{municipio_normalizado}.{UF}.{geocodigo_munic}.V.zip",
+      "estadual": "estadual/{bioma}.{ano}.{estado_normalizado}.{geocodigo_uf}.V.zip"
+    }
+  },
+  
+  "queimadas": {
+    "base_url": "https://dataserver-coids.inpe.br/queimadas/queimadas/area_queimada/AQ1km/shp/",
+    "data_inicio": "2002-09-01",
+    "formato_arquivo": "{YYYY_MM_01}_aq1km_{v6|V6}.zip",
+    "nota": "Anos e meses são gerados dinamicamente até o mês anterior ao atual"
+  },
+  
+  "configuracoes": {
+    "cache_valido_horas": 24,
+    "timeout_download_segundos": 30,
+    "fallback_local": true,
+    "url_verificacao": "https://api.github.com/repos/geodenilson/DesagregaBiomasBR/contents/listas.json"
+  }
+}
