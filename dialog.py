@@ -83,9 +83,15 @@ class DesagregaBiomasBRDialog(QDialog):
         # SEMPRE reset completo de todas as variáveis
         self.reset_all_variables()
         
-        # Shapefile IBGE local para limites
-        self.ibge_shapefile_name = self.get_ibge_shapefile_name()
-        self.ibge_shapefile_path = os.path.join(os.path.dirname(__file__), 'shapefile', f'{self.ibge_shapefile_name}.shp')
+        # Shapefile IBGE (local ou cache) para limites
+        self.ibge_shapefile_name = None
+        self.ibge_shapefile_path = None
+        
+        # Garante que shapefile IBGE esteja disponível
+        if not self.ensure_ibge_shapefile_available():
+            # Fallback para busca local tradicional
+            self.ibge_shapefile_name = self.get_ibge_shapefile_name()
+            self.ibge_shapefile_path = os.path.join(os.path.dirname(__file__), 'shapefile', f'{self.ibge_shapefile_name}.shp')
         
         # Configurações dos temas
         self.biome_options = {
@@ -390,6 +396,140 @@ class DesagregaBiomasBRDialog(QDialog):
             "municipal": "municipal/{uf_lower}/{bioma}.{ano}.{municipio_normalizado}.{UF}.{geocodigo_munic}.V.zip",
             "estadual": "estadual/{bioma}.{ano}.{estado_normalizado}.{geocodigo_uf}.V.zip"
         }
+
+    def ensure_ibge_shapefile_available(self):
+        """Garante que o shapefile IBGE esteja disponível (local ou cache)"""
+        try:
+            import os
+            import tempfile
+            from datetime import datetime, timedelta
+            import zipfile
+            import shutil
+            
+            # Verifica se existe shapefile local primeiro
+            local_shapefile_dir = os.path.join(self.plugin_dir, 'shapefile')
+            if os.path.exists(local_shapefile_dir):
+                shp_files = [f for f in os.listdir(local_shapefile_dir) if f.endswith('.shp')]
+                if shp_files:
+                    print("✅ DEBUG: Shapefile IBGE local encontrado")
+                    return True
+            
+            # Se não existe local, usa sistema de cache
+            cache_dir = os.path.join(tempfile.gettempdir(), 'DesagregaBiomasBR', 'shapefile')
+            os.makedirs(cache_dir, exist_ok=True)
+            
+            # Verifica cache do shapefile
+            cache_shapefile_dir = os.path.join(cache_dir, 'extracted')
+            cache_valid = False
+            
+            if os.path.exists(cache_shapefile_dir):
+                # Verifica se tem .shp e se cache é válido (30 dias)
+                shp_files = [f for f in os.listdir(cache_shapefile_dir) if f.endswith('.shp')]
+                if shp_files:
+                    cache_time = datetime.fromtimestamp(os.path.getmtime(cache_shapefile_dir))
+                    if datetime.now() - cache_time < timedelta(days=30):
+                        cache_valid = True
+                        print("🔧 DEBUG: Usando shapefile IBGE do cache")
+                        # Atualiza o caminho para o cache
+                        self.ibge_shapefile_name = shp_files[0][:-4]  # Remove .shp
+                        self.ibge_shapefile_path = os.path.join(cache_shapefile_dir, shp_files[0])
+                        return True
+            
+            if not cache_valid:
+                print("🌐 DEBUG: Baixando shapefile IBGE atualizado...")
+                success = self.download_ibge_shapefile(cache_dir)
+                if success:
+                    print("✅ DEBUG: Shapefile IBGE baixado e extraído com sucesso")
+                    return True
+                else:
+                    print("❌ DEBUG: Falha no download do shapefile IBGE")
+                    return False
+            
+            return cache_valid
+            
+        except Exception as e:
+            print(f"❌ DEBUG: Erro ao garantir shapefile IBGE: {e}")
+            return False
+
+    def download_ibge_shapefile(self, cache_dir):
+        """Baixa e extrai o shapefile IBGE"""
+        try:
+            import zipfile
+            import shutil
+            from qgis.PyQt.QtCore import QUrl, QEventLoop, QTimer
+            from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
+            
+            # Obtém URL do shapefile do JSON
+            shapefile_url = None
+            if self.config_data and 'ibge_shapefile' in self.config_data:
+                shapefile_url = self.config_data['ibge_shapefile'].get('url')
+            
+            if not shapefile_url:
+                # Fallback para URL hardcoded
+                shapefile_url = "https://github.com/geodenilson/DesagregaBiomasBR/raw/main/shapefile/BC250,%202023.zip"
+            
+            print(f"🌐 DEBUG: Baixando de: {shapefile_url}")
+            
+            # Download do ZIP
+            request = QNetworkRequest(QUrl(shapefile_url))
+            request.setRawHeader(b"User-Agent", b"DesagregaBiomasBR-Plugin/1.0")
+            
+            loop = QEventLoop()
+            timer = QTimer()
+            timer.setSingleShot(True)
+            timer.timeout.connect(loop.quit)
+            
+            reply = self.network_manager.get(request)
+            reply.finished.connect(loop.quit)
+            
+            timer.start(60000)  # 60 segundos para shapefile
+            loop.exec_()
+            
+            if timer.isActive():
+                timer.stop()
+                
+                if reply.error() == QNetworkReply.NoError:
+                    zip_data = reply.readAll().data()
+                    
+                    # Salva ZIP temporário
+                    zip_path = os.path.join(cache_dir, 'ibge_shapefile.zip')
+                    with open(zip_path, 'wb') as f:
+                        f.write(zip_data)
+                    
+                    # Extrai ZIP
+                    extract_dir = os.path.join(cache_dir, 'extracted')
+                    if os.path.exists(extract_dir):
+                        shutil.rmtree(extract_dir)
+                    os.makedirs(extract_dir)
+                    
+                    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                        zip_ref.extractall(extract_dir)
+                    
+                    # Remove ZIP
+                    os.remove(zip_path)
+                    
+                    # Atualiza caminhos
+                    shp_files = [f for f in os.listdir(extract_dir) if f.endswith('.shp')]
+                    if shp_files:
+                        self.ibge_shapefile_name = shp_files[0][:-4]
+                        self.ibge_shapefile_path = os.path.join(extract_dir, shp_files[0])
+                        
+                        reply.deleteLater()
+                        return True
+                    else:
+                        print("❌ DEBUG: Nenhum .shp encontrado no ZIP baixado")
+                else:
+                    print(f"❌ DEBUG: Erro no download: {reply.errorString()}")
+            else:
+                print("❌ DEBUG: Timeout no download do shapefile")
+                reply.abort()
+            
+            reply.deleteLater()
+            return False
+            
+        except Exception as e:
+            print(f"❌ DEBUG: Erro no download do shapefile: {e}")
+            return False
 
     def setupUi(self):
         """Configuração da interface do usuário"""
