@@ -188,9 +188,208 @@ class DesagregaBiomasBRDialog(QDialog):
         # Network manager
         self.network_manager = QNetworkAccessManager()
         
+        # Sistema de configuração dinâmica
+        self.config_data = None
+        self.load_dynamic_config()
+        
         # Setup da UI
         self.setupUi()
         self.update_interface()
+
+    def load_dynamic_config(self):
+        """Carrega configurações dinâmicas do JSON online com cache local"""
+        try:
+            import json
+            import os
+            import tempfile
+            from datetime import datetime, timedelta
+            
+            # URL do JSON no GitHub
+            json_url = "https://raw.githubusercontent.com/geodenilson/DesagregaBiomasBR/main/listas.json"
+            
+            # Cache local
+            cache_dir = os.path.join(tempfile.gettempdir(), 'DesagregaBiomasBR')
+            os.makedirs(cache_dir, exist_ok=True)
+            cache_file = os.path.join(cache_dir, 'config_cache.json')
+            
+            # Verifica validade do cache (24 horas)
+            cache_valid = False
+            if os.path.exists(cache_file):
+                cache_time = datetime.fromtimestamp(os.path.getmtime(cache_file))
+                if datetime.now() - cache_time < timedelta(hours=24):
+                    cache_valid = True
+            
+            if cache_valid:
+                # Usa cache local
+                print("🔧 DEBUG: Usando configurações do cache local")
+                with open(cache_file, 'r', encoding='utf-8') as f:
+                    self.config_data = json.load(f)
+            else:
+                # Tenta baixar nova versão
+                print("🌐 DEBUG: Baixando configurações atualizadas...")
+                self.config_data = self.download_config_json(json_url, cache_file)
+            
+            if self.config_data:
+                print(f"✅ DEBUG: Configurações carregadas (versão {self.config_data.get('version', 'N/A')})")
+                self.apply_dynamic_config()
+            else:
+                print("⚠️ DEBUG: Usando configurações hardcoded como fallback")
+                
+        except Exception as e:
+            print(f"❌ DEBUG: Erro ao carregar configurações dinâmicas: {e}")
+            print("⚠️ DEBUG: Usando configurações hardcoded como fallback")
+
+    def download_config_json(self, url, cache_file):
+        """Baixa JSON de configuração e salva no cache"""
+        try:
+            import json
+            from qgis.PyQt.QtCore import QUrl, QEventLoop, QTimer
+            from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
+            
+            request = QNetworkRequest(QUrl(url))
+            request.setRawHeader(b"User-Agent", b"DesagregaBiomasBR-Plugin/1.0")
+            
+            # Timeout de 10 segundos
+            loop = QEventLoop()
+            timer = QTimer()
+            timer.setSingleShot(True)
+            timer.timeout.connect(loop.quit)
+            
+            reply = self.network_manager.get(request)
+            reply.finished.connect(loop.quit)
+            
+            timer.start(10000)  # 10 segundos
+            loop.exec_()
+            
+            if timer.isActive():
+                timer.stop()
+                
+                if reply.error() == QNetworkReply.NoError:
+                    data = reply.readAll().data().decode('utf-8')
+                    config_data = json.loads(data)
+                    
+                    # Salva no cache
+                    with open(cache_file, 'w', encoding='utf-8') as f:
+                        json.dump(config_data, f, indent=2, ensure_ascii=False)
+                    
+                    reply.deleteLater()
+                    return config_data
+                else:
+                    print(f"❌ DEBUG: Erro na requisição: {reply.errorString()}")
+            else:
+                print("❌ DEBUG: Timeout no download do JSON")
+                reply.abort()
+            
+            reply.deleteLater()
+            return None
+            
+        except Exception as e:
+            print(f"❌ DEBUG: Erro no download do JSON: {e}")
+            return None
+
+    def apply_dynamic_config(self):
+        """Aplica configurações dinâmicas carregadas do JSON"""
+        if not self.config_data:
+            return
+            
+        try:
+            # Atualiza biomas
+            if 'biomas' in self.config_data:
+                self.biome_options = self.config_data['biomas']
+                print("✅ DEBUG: Biomas atualizados dinamicamente")
+            
+            # Atualiza PRODES
+            if 'prodes' in self.config_data:
+                prodes_config = self.config_data['prodes']
+                if 'anos_incrementais' in prodes_config:
+                    self.prodes_years = prodes_config['anos_incrementais']
+                if 'anos_acumulados' in prodes_config:
+                    self.prodes_years_acumulado = prodes_config['anos_acumulados']
+                if 'anos_base' in prodes_config:
+                    self.prodes_base_years = prodes_config['anos_base']
+                print("✅ DEBUG: PRODES atualizado dinamicamente")
+            
+            # Atualiza DETER
+            if 'deter' in self.config_data:
+                deter_config = self.config_data['deter']
+                if 'urls' in deter_config:
+                    self.deter_urls = deter_config['urls']
+                if 'classes' in deter_config:
+                    self.deter_classes = deter_config['classes']
+                if 'datas_inicio' in deter_config:
+                    self.deter_start_dates = deter_config['datas_inicio']
+                if 'typenames' in deter_config:
+                    self.deter_typenames = deter_config['typenames']
+                print("✅ DEBUG: DETER atualizado dinamicamente")
+            
+            # Atualiza TERRACLASS
+            if 'terraclass' in self.config_data:
+                terraclass_config = self.config_data['terraclass']
+                if 'anos' in terraclass_config:
+                    self.terraclass_years = terraclass_config['anos']
+                print("✅ DEBUG: TERRACLASS atualizado dinamicamente")
+            
+            # Atualiza QUEIMADAS
+            if 'queimadas' in self.config_data:
+                queimadas_config = self.config_data['queimadas']
+                if 'base_url' in queimadas_config:
+                    self.queimadas_base_url = queimadas_config['base_url']
+                if 'data_inicio' in queimadas_config:
+                    self.queimadas_start_date = queimadas_config['data_inicio']
+                print("✅ DEBUG: QUEIMADAS atualizado dinamicamente")
+                
+        except Exception as e:
+            print(f"❌ DEBUG: Erro ao aplicar configurações dinâmicas: {e}")
+
+    def get_dynamic_prodes_urls(self, biome):
+        """Retorna URLs do PRODES usando configuração dinâmica"""
+        if self.config_data and 'prodes' in self.config_data and 'urls' in self.config_data['prodes']:
+            return self.config_data['prodes']['urls'].get(biome)
+        
+        # Fallback para URLs hardcoded
+        fallback_urls = {
+            'Pantanal': {
+                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pantanal-nb/accumulated_deforestation_2000/ows',
+                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pantanal-nb/yearly_deforestation/ows'
+            },
+            'Amazônia': {
+                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-amazon-nb/accumulated_deforestation_2007_biome/ows',
+                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-amazon-nb/yearly_deforestation_biome/ows'
+            },
+            'Cerrado': {
+                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-cerrado-nb/accumulated_deforestation_2000/ows',
+                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-cerrado-nb/yearly_deforestation/ows'
+            },
+            'Pampa': {
+                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pampa-nb/accumulated_deforestation_2000/ows',
+                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pampa-nb/yearly_deforestation/ows'
+            },
+            'Caatinga': {
+                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-caatinga-nb/accumulated_deforestation_2000/ows',
+                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-caatinga-nb/yearly_deforestation/ows'
+            },
+            'Mata Atlântica': {
+                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-mata-atlantica-nb/accumulated_deforestation_2000/ows',
+                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-mata-atlantica-nb/yearly_deforestation/ows'
+            },
+            'Amazônia Legal': {
+                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-legal-amz/accumulated_deforestation_2007/ows',
+                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-legal-amz/yearly_deforestation/ows'
+            }
+        }
+        return fallback_urls.get(biome)
+
+    def get_dynamic_terraclass_urls(self):
+        """Retorna templates de URL do TERRACLASS usando configuração dinâmica"""
+        if self.config_data and 'terraclass' in self.config_data and 'urls' in self.config_data['terraclass']:
+            return self.config_data['terraclass']['urls']
+        
+        # Fallback para URLs hardcoded
+        return {
+            "base": "https://www.terraclass.gov.br/helpers/terraclass_data4download_2024/V/",
+            "municipal": "municipal/{uf_lower}/{bioma}.{ano}.{municipio_normalizado}.{UF}.{geocodigo_munic}.V.zip",
+            "estadual": "estadual/{bioma}.{ano}.{estado_normalizado}.{geocodigo_uf}.V.zip"
+        }
 
     def setupUi(self):
         """Configuração da interface do usuário"""
@@ -627,38 +826,6 @@ class DesagregaBiomasBRDialog(QDialog):
     def create_step3_content(self):
         """Cria o conteúdo da terceira etapa - Processamento Final"""
         
-        # URLs dos serviços PRODES por bioma
-        self.prodes_urls = {
-            'Pantanal': {
-                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pantanal-nb/accumulated_deforestation_2000/ows',
-                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pantanal-nb/yearly_deforestation/ows'
-            },
-            'Amazônia': {
-                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-amazon-nb/accumulated_deforestation_2007_biome/ows',
-                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-amazon-nb/yearly_deforestation_biome/ows'
-            },
-            'Cerrado': {
-                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-cerrado-nb/accumulated_deforestation_2000/ows',
-                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-cerrado-nb/yearly_deforestation/ows'
-            },
-            'Pampa': {
-                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pampa-nb/accumulated_deforestation_2000/ows',
-                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pampa-nb/yearly_deforestation/ows'
-            },
-            'Caatinga': {
-                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-caatinga-nb/accumulated_deforestation_2000/ows',
-                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-caatinga-nb/yearly_deforestation/ows'
-            },
-            'Mata Atlântica': {
-                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-mata-atlantica-nb/accumulated_deforestation_2000/ows',
-                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-mata-atlantica-nb/yearly_deforestation/ows'
-            },
-            'Amazônia Legal': {
-                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-legal-amz/accumulated_deforestation_2007/ows',
-                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-legal-amz/yearly_deforestation/ows'
-            }
-        }
-        
         # Configurações de Salvamento
         save_group = QGroupBox("📁 Configurações de Salvamento")
         save_layout = QVBoxLayout()
@@ -867,7 +1034,8 @@ class DesagregaBiomasBRDialog(QDialog):
                 return
             
             # Verifica se bioma tem URLs disponíveis para PRODES
-            if self.selected_biome not in self.prodes_urls:
+            prodes_urls = self.get_dynamic_prodes_urls(self.selected_biome)
+            if not prodes_urls:
                 self.update_notes(f"❌ ERRO: URLs PRODES não disponíveis para {self.selected_biome}!")
                 return
                 
@@ -2816,7 +2984,7 @@ class DesagregaBiomasBRDialog(QDialog):
                 'layer_names': []
             }
             
-            urls = self.prodes_urls[self.selected_biome]
+            urls = self.get_dynamic_prodes_urls(self.selected_biome)
             
             if self.data_type == "incremental":
                 # Só yearly_deforestation com filtro
@@ -2994,10 +3162,12 @@ class DesagregaBiomasBRDialog(QDialog):
             if not shapefile_data:
                 raise Exception("Falha ao obter dados do shapefile IBGE")
             
-            # Constrói URL baseada no tipo de download
+            # Constrói URL baseada no tipo de download usando configuração dinâmica
+            url_templates = self.get_dynamic_terraclass_urls()
+            
             if self.terraclass_municipality:
                 # Download municipal
-                url_template = "https://www.terraclass.gov.br/helpers/terraclass_data4download_2024/V/municipal/{uf_lower}/{biome}.{ano}.{municipio_normalizado}.{UF}.{geocodigo_munic}.V.zip"
+                url_template = url_templates['base'] + url_templates['municipal']
                 
                 url = url_template.format(
                     uf_lower=shapefile_data['uf'].lower(),
@@ -3011,7 +3181,7 @@ class DesagregaBiomasBRDialog(QDialog):
                 location = f"{self.terraclass_state} - {self.terraclass_municipality}"
             else:
                 # Download estadual
-                url_template = "https://www.terraclass.gov.br/helpers/terraclass_data4download_2024/V/estadual/{biome}.{ano}.{estado_normalizado}.{geocodigo_uf}.V.zip"
+                url_template = url_templates['base'] + url_templates['estadual']
                 
                 url = url_template.format(
                     biome='AMZ' if self.selected_biome == 'Amazônia' else 'CER',
