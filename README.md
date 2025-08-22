@@ -222,8 +222,21 @@ DesagregaBiomasBR/
 
 ## ⚙️ **Configurações Técnicas**
 
+### **Sistema de Configuração Dinâmica** ⭐ *NOVO*
+- **Atualização automática** via arquivo JSON no GitHub
+- **Cache local** com validade de 24 horas para configurações
+- **Fallback robusto** para funcionamento offline
+- **URLs e parâmetros** atualizados automaticamente sem reinstalar plugin
+- **Suporte a redirecionamentos** HTTP para downloads grandes
+
+### **Sistema de Cache Inteligente** ⭐ *NOVO*
+- **Shapefile IBGE** baixado automaticamente (cache de 30 dias)
+- **Configurações JSON** atualizadas diariamente
+- **Download sob demanda** apenas quando necessário
+- **Funcionamento offline** com dados em cache
+
 ### **Processamento de Dados**
-- Download automático via WFS/HTTP
+- Download automático via WFS/HTTP com suporte a redirecionamentos
 - Corte espacial usando algoritmos nativos do QGIS
 - Correção automática de geometrias inválidas
 - Reprojeção automática para SIRGAS 2000
@@ -231,15 +244,39 @@ DesagregaBiomasBR/
 
 ### **Otimizações**
 - Download paginado para grandes volumes de dados
-- Sistema de cache para múltiplas tentativas
+- Sistema de cache inteligente para múltiplas tentativas
 - Verificação de abort durante processamentos longos
 - Limpeza automática de arquivos temporários
+- URLs dinâmicas sempre atualizadas
 
 ### **Logs e Debug**
 - Sistema de logs persistentes usando QgsMessageLog
 - Mensagens de debug detalhadas para resolução de problemas
 - Validação de geometrias e CRS
 - Relatórios de estatísticas de processamento
+- Logs de redirecionamentos HTTP e cache
+
+## 🔄 **Sistema de Atualizações Automáticas** ⭐ *NOVO*
+
+### **Configurações Dinâmicas**
+O plugin mantém suas configurações sempre atualizadas através de um sistema inovador:
+
+- **📄 Arquivo JSON Central**: `listas.json` hospedado no GitHub
+- **🔄 Atualização Diária**: Download automático a cada 24 horas
+- **📦 Cache Local**: Configurações salvas localmente para uso offline
+- **🔗 URLs Dinâmicas**: Links de dados atualizados automaticamente
+- **📅 Anos e Biomas**: Listas expandidas conforme novos dados
+
+### **Benefícios para o Usuário**
+- ✅ **Sempre atualizado**: Novos anos e dados aparecem automaticamente
+- ✅ **Funciona offline**: Cache local garante funcionamento sem internet
+- ✅ **Zero manutenção**: Não precisa reinstalar o plugin para atualizações
+- ✅ **URLs corretas**: Links nunca ficam desatualizados
+
+### **Cache de Dados IBGE**
+- **🗺️ Shapefile IBGE**: Download automático na primeira execução
+- **📁 Cache de 30 dias**: Atualização mensal dos limites IBGE
+- **💾 Economia de espaço**: Plugin mantém apenas ~3MB no repositório
 
 ## 🐛 **Solução de Problemas**
 
@@ -248,6 +285,15 @@ DesagregaBiomasBR/
 **Erro de conectividade:**
 - Verifique conexão com internet
 - URLs dos serviços podem estar temporariamente indisponíveis
+- Sistema funciona offline com dados em cache
+
+**Configurações desatualizadas:**
+- ✅ **Solução automática**: Plugin atualiza configurações diariamente
+- **Cache manual**: Delete `%TEMP%\DesagregaBiomasBR\config_cache.json` para forçar atualização
+
+**Shapefile IBGE não encontrado:**
+- ✅ **Download automático**: Plugin baixa shapefile na primeira execução
+- **Cache manual**: Delete `%TEMP%\DesagregaBiomasBR\shapefile\` para redownload
 
 **Geometrias inválidas:**
 - Plugin aplica correção automática usando `native:fixgeometries`
@@ -264,6 +310,7 @@ DesagregaBiomasBR/
 ### **Logs de Debug**
 Os logs detalhados ficam disponíveis em:
 - QGIS > Exibir > Painéis > Log de Mensagens > DesagregaBiomasBR
+- Logs incluem informações de cache, redirecionamentos e downloads
 
 ## 📚 **Referências**
 

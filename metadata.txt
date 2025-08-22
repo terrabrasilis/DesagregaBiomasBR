@@ -30,4 +30,10 @@ changelog=
     - Múltiplas opções de corte espacial
     - Formatos Shapefile e GeoPackage
     - Interface responsiva e intuitiva
-    - Sistema de metadados completos 
+    - Sistema de metadados completos
+    - Sistema de configuração dinâmica via JSON
+    - Cache inteligente para shapefile IBGE (30 dias)
+    - Atualização automática de URLs e parâmetros (24h)
+    - Suporte a redirecionamentos HTTP
+    - Funcionamento offline com cache local
+    - Plugin auto-atualizável sem reinstalação 

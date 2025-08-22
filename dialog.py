@@ -540,8 +540,19 @@ class DesagregaBiomasBRDialog(QDialog):
                 
                 # DEBUG: Mostra status HTTP independente do erro
                 http_status = reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)
+                redirect_url = reply.attribute(QNetworkRequest.RedirectionTargetAttribute)
                 print(f"🔧 DEBUG: HTTP Status: {http_status}")
                 QgsMessageLog.logMessage(f"🔧 HTTP Status: {http_status}", "DesagregaBiomasBR", Qgis.Info)
+                
+                # SUPORTE A REDIRECIONAMENTOS (302, 301, etc)
+                if http_status in [301, 302, 303, 307, 308] and redirect_url:
+                    redirect_url_str = redirect_url.toString()
+                    print(f"🔄 DEBUG: Redirecionamento para: {redirect_url_str}")
+                    QgsMessageLog.logMessage(f"🔄 Seguindo redirecionamento: {redirect_url_str}", "DesagregaBiomasBR", Qgis.Info)
+                    
+                    # Tenta o download na URL de redirecionamento
+                    reply.deleteLater()
+                    return self.download_with_redirect(redirect_url_str, cache_dir)
                 
                 if reply.error() == QNetworkReply.NoError:
                     zip_data = reply.readAll().data()
@@ -599,6 +610,98 @@ class DesagregaBiomasBRDialog(QDialog):
         except Exception as e:
             print(f"❌ DEBUG: Erro no download do shapefile: {e}")
             QgsMessageLog.logMessage(f"❌ Erro no download: {e}", "DesagregaBiomasBR", Qgis.Critical)
+            return False
+
+    def download_with_redirect(self, redirect_url, cache_dir):
+        """Baixa shapefile seguindo redirecionamento"""
+        try:
+            import zipfile
+            import shutil
+            from qgis.PyQt.QtCore import QUrl, QEventLoop, QTimer
+            from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
+            from qgis.core import QgsMessageLog, Qgis
+            
+            print(f"🔄 DEBUG: Baixando da URL de redirecionamento: {redirect_url}")
+            QgsMessageLog.logMessage(f"🔄 Baixando da URL de redirecionamento", "DesagregaBiomasBR", Qgis.Info)
+            
+            # Mesmo processo, mas com URL de redirecionamento
+            request = QNetworkRequest(QUrl(redirect_url))
+            request.setRawHeader(b"User-Agent", b"DesagregaBiomasBR-Plugin/1.0")
+            
+            # Timeout maior para redirecionamento (60 segundos)
+            loop = QEventLoop()
+            timer = QTimer()
+            timer.setSingleShot(True)
+            timer.timeout.connect(loop.quit)
+            
+            reply = self.network_manager.get(request)
+            reply.finished.connect(loop.quit)
+            
+            timer.start(60000)  # 60 segundos para redirecionamento
+            loop.exec_()
+            
+            if timer.isActive():
+                timer.stop()
+                
+                http_status = reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)
+                print(f"🔄 DEBUG: HTTP Status redirecionamento: {http_status}")
+                QgsMessageLog.logMessage(f"🔄 HTTP Status redirecionamento: {http_status}", "DesagregaBiomasBR", Qgis.Info)
+                
+                if reply.error() == QNetworkReply.NoError:
+                    zip_data = reply.readAll().data()
+                    print(f"✅ DEBUG: Dados recebidos do redirecionamento: {len(zip_data)} bytes ({len(zip_data)/1024/1024:.1f}MB)")
+                    QgsMessageLog.logMessage(f"✅ Dados recebidos: {len(zip_data)/1024/1024:.1f}MB", "DesagregaBiomasBR", Qgis.Info)
+                    
+                    if len(zip_data) == 0:
+                        print("❌ DEBUG: Arquivo redirecionado está vazio!")
+                        reply.deleteLater()
+                        return False
+                    
+                    # Salva ZIP
+                    zip_path = os.path.join(cache_dir, "BC250_2023.zip")
+                    with open(zip_path, 'wb') as f:
+                        f.write(zip_data)
+                    
+                    print(f"✅ DEBUG: ZIP redirecionado salvo: {zip_path}")
+                    QgsMessageLog.logMessage(f"✅ ZIP salvo com sucesso", "DesagregaBiomasBR", Qgis.Info)
+                    
+                    # Extrai ZIP
+                    extract_dir = os.path.join(cache_dir, 'extracted')
+                    if os.path.exists(extract_dir):
+                        shutil.rmtree(extract_dir)
+                    os.makedirs(extract_dir)
+                    
+                    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                        zip_ref.extractall(extract_dir)
+                    
+                    # Remove ZIP
+                    os.remove(zip_path)
+                    
+                    # Configura shapefile
+                    shp_files = [f for f in os.listdir(extract_dir) if f.endswith('.shp')]
+                    if shp_files:
+                        self.ibge_shapefile_name = shp_files[0][:-4]
+                        self.ibge_shapefile_path = os.path.join(extract_dir, shp_files[0])
+                        print(f"✅ DEBUG: Shapefile redirecionado configurado: {self.ibge_shapefile_path}")
+                        QgsMessageLog.logMessage(f"✅ Shapefile configurado com sucesso", "DesagregaBiomasBR", Qgis.Info)
+                        
+                        reply.deleteLater()
+                        return True
+                    else:
+                        print("❌ DEBUG: Nenhum .shp encontrado no ZIP redirecionado")
+                else:
+                    print(f"❌ DEBUG: Erro no redirecionamento: {reply.errorString()}")
+                    QgsMessageLog.logMessage(f"❌ Erro no redirecionamento: {reply.errorString()}", "DesagregaBiomasBR", Qgis.Critical)
+            else:
+                print("❌ DEBUG: Timeout no redirecionamento")
+                reply.abort()
+            
+            reply.deleteLater()
+            return False
+            
+        except Exception as e:
+            print(f"❌ DEBUG: Erro no download redirecionado: {e}")
+            QgsMessageLog.logMessage(f"❌ Erro no redirecionamento: {e}", "DesagregaBiomasBR", Qgis.Critical)
             return False
 
     def setupUi(self):
