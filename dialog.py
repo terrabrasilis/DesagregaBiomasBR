@@ -192,15 +192,18 @@ class DesagregaBiomasBRDialog(QDialog):
         self.config_data = None
         self.load_dynamic_config()
         
-        # AGORA garante que shapefile IBGE esteja disponível (APÓS network_manager e config_data)
-        if not self.ensure_ibge_shapefile_available():
-            # Fallback para busca local tradicional
-            self.ibge_shapefile_name = self.get_ibge_shapefile_name()
-            self.ibge_shapefile_path = os.path.join(os.path.dirname(__file__), 'shapefile', f'{self.ibge_shapefile_name}.shp')
+        # Shapefile - inicialização básica (será verificado em background)
+        self.ibge_shapefile_name = None
+        self.ibge_shapefile_path = None
+        self.shapefile_ready = False
         
-        # Setup da UI
+        # Setup da UI IMEDIATAMENTE
         self.setupUi()
         self.update_interface()
+        
+        # 🚀 NOVO: Downloads em background APÓS a janela estar visível
+        # Usar QTimer para fazer downloads assíncronos
+        QTimer.singleShot(100, self.background_downloads)
 
     def load_dynamic_config(self):
         """Carrega configurações dinâmicas do JSON online com cache local"""
@@ -733,8 +736,8 @@ class DesagregaBiomasBRDialog(QDialog):
         
         self.setLayout(main_layout)
         
-        # Inicializa mensagem inicial usando sistema estruturado de notas
-        self.update_notes("💡 DesagregaBiomasBR é um plugin que facilita o acesso e processamento de dados dos principais sistemas de monitoramento ambiental brasileiro: 🌲 PRODES (desmatamento), 🚨 DETER (alertas), 🔥 QUEIMADAS (áreas queimadas) e 🏞️ TERRACLASS (uso da terra).", "config")
+        # Inicializa mensagem inicial mostrando que está preparando
+        self.update_notes("🚀 DesagregaBiomasBR carregando... Verificando atualizações e preparando dados dos sistemas de monitoramento ambiental.", "loading")
 
     def reset_all_variables(self):
         """Reset COMPLETO de todas as variáveis para garantir estado limpo"""
@@ -954,6 +957,42 @@ class DesagregaBiomasBRDialog(QDialog):
         buttons_layout.addWidget(self.btn_abort)
         
         return buttons_layout
+
+    def background_downloads(self):
+        """🚀 NOVO: Executa downloads em background após a janela estar visível"""
+        try:
+            from qgis.core import QgsMessageLog, Qgis
+            
+            print("🔄 DEBUG: Iniciando downloads em background...")
+            QgsMessageLog.logMessage("🔄 Iniciando downloads em background...", "DesagregaBiomasBR", Qgis.Info)
+            
+            # Mostrar indicador de carregamento nos notes
+            self.update_notes("⏳ Verificando atualizações e preparando dados...", "loading")
+            
+            # Verificar shapefile IBGE em background
+            if not self.ensure_ibge_shapefile_available():
+                # Fallback para busca local tradicional
+                self.ibge_shapefile_name = self.get_ibge_shapefile_name()
+                self.ibge_shapefile_path = os.path.join(os.path.dirname(__file__), 'shapefile', f'{self.ibge_shapefile_name}.shp')
+                print("⚠️ DEBUG: Usando fallback local para shapefile")
+            else:
+                print("✅ DEBUG: Shapefile IBGE verificado com sucesso")
+                
+            self.shapefile_ready = True
+            
+            # Atualizar interface para mostrar que tudo está pronto
+            self.update_notes("✅ Tudo pronto! Selecione um bioma para começar.", "ready")
+            
+        except Exception as e:
+            print(f"❌ DEBUG: Erro em background_downloads: {e}")
+            QgsMessageLog.logMessage(f"❌ Erro em downloads background: {e}", "DesagregaBiomasBR", Qgis.Critical)
+            
+            # Fallback básico
+            self.ibge_shapefile_name = self.get_ibge_shapefile_name()
+            self.ibge_shapefile_path = os.path.join(os.path.dirname(__file__), 'shapefile', f'{self.ibge_shapefile_name}.shp')
+            self.shapefile_ready = True
+            
+            self.update_notes("⚠️ Modo offline ativo. Funcionalidades limitadas.", "warning")
 
     def update_interface(self):
         """Atualiza a interface baseada no passo atual"""
@@ -4368,7 +4407,10 @@ class DesagregaBiomasBRDialog(QDialog):
             self.radio_draw.setVisible(True)
             
             if not theme:
-                self.update_notes("💡 DesagregaBiomasBR é um plugin que facilita o acesso e processamento de dados dos principais sistemas de monitoramento ambiental brasileiro: 🌲 PRODES (desmatamento), 🚨 DETER (alertas), 🔥 QUEIMADAS (áreas queimadas) e 🏞️ TERRACLASS (uso da terra).", "config")
+                if self.shapefile_ready:
+                    self.update_notes("✅ Tudo pronto! Selecione um bioma para começar. 💡 DesagregaBiomasBR facilita o acesso aos sistemas: 🌲 PRODES, 🚨 DETER, 🔥 QUEIMADAS e 🏞️ TERRACLASS.", "ready")
+                else:
+                    self.update_notes("⏳ Preparando dados... Selecione um bioma para começar.", "loading")
             else:
                 self.update_comprehensive_notes_responsive()
             
@@ -4567,7 +4609,10 @@ class DesagregaBiomasBRDialog(QDialog):
             self.update_notes(config_text, "config")
         else:
             if not self.selected_theme:
-                config_text = "💡 DesagregaBiomasBR é um plugin que facilita o acesso e processamento de dados dos principais sistemas de monitoramento ambiental brasileiro: 🌲 PRODES (desmatamento), 🚨 DETER (alertas), 🔥 QUEIMADAS (áreas queimadas) e 🏞️ TERRACLASS (uso da terra)."
+                if self.shapefile_ready:
+                    config_text = "✅ Tudo pronto! Selecione um bioma para começar. 💡 DesagregaBiomasBR facilita o acesso aos sistemas: 🌲 PRODES, 🚨 DETER, 🔥 QUEIMADAS e 🏞️ TERRACLASS."
+                else:
+                    config_text = "⏳ Preparando dados... Selecione um bioma para começar."
             elif not self.selected_biome:
                 config_text = f"📊 Tema: {self.selected_theme} | 🎯 Selecione um bioma/região para continuar"
             else:
