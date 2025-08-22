@@ -118,8 +118,8 @@
   },
   
   "ibge_shapefile": {
-    "url": "https://github.com/geodenilson/DesagregaBiomasBR/raw/main/BC250,%202023.zip",
-    "nome_arquivo": "BC250, 2023",
+    "url": "https://github.com/geodenilson/DesagregaBiomasBR/raw/main/BC250_2023.zip",
+    "nome_arquivo": "BC250_2023",
     "versao": "2023",
     "descricao": "Base Cartográfica Contínua do Brasil na escala 1:250.000 - IBGE 2023",
     "cache_valido_dias": 30

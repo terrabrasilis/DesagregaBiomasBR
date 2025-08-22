@@ -488,13 +488,12 @@ class DesagregaBiomasBRDialog(QDialog):
             return False
 
     def download_ibge_shapefile(self, cache_dir):
-        """Baixa e extrai o shapefile IBGE"""
+        """Baixa e extrai o shapefile IBGE - COPIADO DA ESTRATÉGIA DO JSON"""
         try:
             import zipfile
             import shutil
             from qgis.PyQt.QtCore import QUrl, QEventLoop, QTimer
             from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
-            
             from qgis.core import QgsMessageLog, Qgis
             
             QgsMessageLog.logMessage(f"🔧 Iniciando download do shapefile IBGE, cache_dir: {cache_dir}", "DesagregaBiomasBR", Qgis.Info)
@@ -511,37 +510,20 @@ class DesagregaBiomasBRDialog(QDialog):
                 print(f"🔧 DEBUG: config_data não disponível ou sem ibge_shapefile")
             
             if not shapefile_url:
-                # Fallback para URL hardcoded (AGORA NA RAIZ)
-                shapefile_url = "https://github.com/geodenilson/DesagregaBiomasBR/raw/main/BC250,%202023.zip"
+                # Fallback para URL hardcoded (NOME LIMPO SEM CARACTERES ESPECIAIS)
+                shapefile_url = "https://github.com/geodenilson/DesagregaBiomasBR/raw/main/BC250_2023.zip"
                 QgsMessageLog.logMessage(f"🔧 Usando URL fallback: {shapefile_url}", "DesagregaBiomasBR", Qgis.Info)
                 print(f"🔧 DEBUG: Usando URL fallback: {shapefile_url}")
             
+            # **ESTRATÉGIA EXATA DO JSON - SEM CARACTERES ESPECIAIS NA URL**
+            print(f"🌐 DEBUG: Baixando de (URL limpa): {shapefile_url}")
             QgsMessageLog.logMessage(f"🌐 Baixando shapefile de: {shapefile_url}", "DesagregaBiomasBR", Qgis.Info)
-            print(f"🌐 DEBUG: Baixando de: {shapefile_url}")
             
-            # Verifica se network_manager existe
-            if not hasattr(self, 'network_manager') or not self.network_manager:
-                QgsMessageLog.logMessage(f"❌ network_manager não disponível", "DesagregaBiomasBR", Qgis.Critical)
-                print(f"❌ DEBUG: network_manager não disponível")
-                return False
-            
-            # Download do ZIP - CODIFICA URL CORRETAMENTE
-            
-            # Codifica apenas caracteres problemáticos específicos
-            encoded_url = shapefile_url.replace(',', '%2C').replace(' ', '%20')
-            # Vírgula: , → %2C
-            # Espaço:   → %20
-            
-            print(f"🔧 DEBUG: URL original: {shapefile_url}")
-            print(f"🔧 DEBUG: URL codificada: {encoded_url}")
-            QgsMessageLog.logMessage(f"🔧 URL codificada: {encoded_url}", "DesagregaBiomasBR", Qgis.Info)
-            
-            request = QNetworkRequest(QUrl(encoded_url))
+            # EXATAMENTE como o JSON funciona (URL limpa, sem caracteres especiais)
+            request = QNetworkRequest(QUrl(shapefile_url))
             request.setRawHeader(b"User-Agent", b"DesagregaBiomasBR-Plugin/1.0")
-            request.setRawHeader(b"Accept", b"*/*")
             
-            print(f"🔧 DEBUG: Criando requisição para: {request.url().toString()}")
-            
+            # Timeout igual ao JSON que funciona (10 segundos APENAS PARA TESTE)
             loop = QEventLoop()
             timer = QTimer()
             timer.setSingleShot(True)
@@ -550,37 +532,35 @@ class DesagregaBiomasBRDialog(QDialog):
             reply = self.network_manager.get(request)
             reply.finished.connect(loop.quit)
             
-            # Conecta sinais para debug
-            reply.downloadProgress.connect(lambda received, total: 
-                print(f"📥 DEBUG: Download progress: {received}/{total} bytes ({received/1024/1024:.1f}MB/{total/1024/1024:.1f}MB)") if total > 0 else None)
-            
-            timer.start(300000)  # 5 minutos para shapefile (81MB)
-            print(f"🔧 DEBUG: Iniciando download, timeout: 5 minutos")
+            timer.start(10000)  # IGUAL AO JSON - 10 segundos
             loop.exec_()
             
             if timer.isActive():
                 timer.stop()
-                print(f"🔧 DEBUG: Download finalizado, erro: {reply.error()}")
-                print(f"🔧 DEBUG: HTTP Status: {reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)}")
-                print(f"🔧 DEBUG: Content-Type: {reply.rawHeader(b'Content-Type').data().decode()}")
+                
+                # DEBUG: Mostra status HTTP independente do erro
+                http_status = reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)
+                print(f"🔧 DEBUG: HTTP Status: {http_status}")
+                QgsMessageLog.logMessage(f"🔧 HTTP Status: {http_status}", "DesagregaBiomasBR", Qgis.Info)
                 
                 if reply.error() == QNetworkReply.NoError:
                     zip_data = reply.readAll().data()
-                    print(f"🔧 DEBUG: Dados recebidos: {len(zip_data)} bytes ({len(zip_data)/1024/1024:.1f}MB)")
+                    print(f"✅ DEBUG: Dados recebidos: {len(zip_data)} bytes ({len(zip_data)/1024/1024:.1f}MB)")
+                    QgsMessageLog.logMessage(f"✅ Dados recebidos: {len(zip_data)/1024/1024:.1f}MB", "DesagregaBiomasBR", Qgis.Info)
                     
                     if len(zip_data) == 0:
                         print("❌ DEBUG: Arquivo baixado está vazio!")
                         reply.deleteLater()
                         return False
                     
-                    # Salva ZIP temporário com nome original
-                    original_filename = shapefile_url.split('/')[-1]  # Nome original com vírgula
+                    # Salva ZIP
+                    original_filename = shapefile_url.split('/')[-1]
                     zip_path = os.path.join(cache_dir, original_filename)
                     with open(zip_path, 'wb') as f:
                         f.write(zip_data)
                     
-                    print(f"✅ DEBUG: ZIP salvo: {zip_path} ({os.path.getsize(zip_path)} bytes)")
-                    QgsMessageLog.logMessage(f"✅ ZIP salvo: {original_filename} ({len(zip_data)/1024/1024:.1f}MB)", "DesagregaBiomasBR", Qgis.Info)
+                    print(f"✅ DEBUG: ZIP salvo: {zip_path}")
+                    QgsMessageLog.logMessage(f"✅ ZIP salvo: {original_filename}", "DesagregaBiomasBR", Qgis.Info)
                     
                     # Extrai ZIP
                     extract_dir = os.path.join(cache_dir, 'extracted')
@@ -588,41 +568,29 @@ class DesagregaBiomasBRDialog(QDialog):
                         shutil.rmtree(extract_dir)
                     os.makedirs(extract_dir)
                     
-                    try:
-                        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                            zip_ref.extractall(extract_dir)
-                        print(f"✅ DEBUG: ZIP extraído para: {extract_dir}")
-                    except zipfile.BadZipFile:
-                        print("❌ DEBUG: Arquivo ZIP corrompido!")
-                        reply.deleteLater()
-                        return False
+                    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                        zip_ref.extractall(extract_dir)
                     
                     # Remove ZIP
                     os.remove(zip_path)
                     
-                    # Atualiza caminhos
+                    # Configura shapefile
                     shp_files = [f for f in os.listdir(extract_dir) if f.endswith('.shp')]
-                    print(f"🔧 DEBUG: Arquivos .shp encontrados: {shp_files}")
-                    
                     if shp_files:
                         self.ibge_shapefile_name = shp_files[0][:-4]
                         self.ibge_shapefile_path = os.path.join(extract_dir, shp_files[0])
                         print(f"✅ DEBUG: Shapefile configurado: {self.ibge_shapefile_path}")
+                        QgsMessageLog.logMessage(f"✅ Shapefile configurado com sucesso", "DesagregaBiomasBR", Qgis.Info)
                         
                         reply.deleteLater()
                         return True
                     else:
-                        print("❌ DEBUG: Nenhum .shp encontrado no ZIP baixado")
+                        print("❌ DEBUG: Nenhum .shp encontrado no ZIP")
                 else:
-                    print(f"❌ DEBUG: Erro no download: {reply.error()} - {reply.errorString()}")
-                    print(f"❌ DEBUG: HTTP Status: {reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)}")
-                    print(f"❌ DEBUG: Redirect URL: {reply.attribute(QNetworkRequest.RedirectionTargetAttribute)}")
-                    print(f"❌ DEBUG: Response headers:")
-                    for header in reply.rawHeaderList():
-                        value = reply.rawHeader(header).data().decode()
-                        print(f"❌ DEBUG:   {header.data().decode()}: {value}")
+                    print(f"❌ DEBUG: Erro na requisição: {reply.errorString()}")
+                    QgsMessageLog.logMessage(f"❌ Erro na requisição: {reply.errorString()}", "DesagregaBiomasBR", Qgis.Critical)
             else:
-                print("❌ DEBUG: Timeout no download do shapefile (5 minutos)")
+                print("❌ DEBUG: Timeout no download do shapefile")
                 reply.abort()
             
             reply.deleteLater()
@@ -630,6 +598,7 @@ class DesagregaBiomasBRDialog(QDialog):
             
         except Exception as e:
             print(f"❌ DEBUG: Erro no download do shapefile: {e}")
+            QgsMessageLog.logMessage(f"❌ Erro no download: {e}", "DesagregaBiomasBR", Qgis.Critical)
             return False
 
     def setupUi(self):
