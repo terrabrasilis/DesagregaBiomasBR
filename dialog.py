@@ -975,8 +975,45 @@ class DesagregaBiomasBRDialog(QDialog):
                 self.ibge_shapefile_name = self.get_ibge_shapefile_name()
                 self.ibge_shapefile_path = os.path.join(os.path.dirname(__file__), 'shapefile', f'{self.ibge_shapefile_name}.shp')
                 print("⚠️ DEBUG: Usando fallback local para shapefile")
+                
+                # Tenta carregar o shapefile local
+                if os.path.exists(self.ibge_shapefile_path):
+                    success = self.load_ibge_shapefile()
+                    if success and self.ibge_layer and self.ibge_layer.isValid():
+                        print(f"✅ DEBUG: Shapefile local carregado: {self.ibge_layer.featureCount()} feições")
+                    else:
+                        print("❌ DEBUG: Falha ao carregar shapefile local")
+                        self.shapefile_ready = False
+                        self.update_notes("❌ Shapefile IBGE não encontrado. Baixe manualmente ou verifique a conexão.", "error")
+                        return
+                else:
+                    print("❌ DEBUG: Nenhum shapefile disponível (local ou cache)")
+                    self.shapefile_ready = False
+                    self.update_notes("❌ Shapefile IBGE não encontrado. Baixe manualmente ou verifique a conexão.", "error")
+                    return
             else:
                 print("✅ DEBUG: Shapefile IBGE verificado com sucesso")
+                print(f"✅ DEBUG: Caminho do shapefile: {self.ibge_shapefile_path}")
+                
+                # 🚀 CRÍTICO: Carrega o ibge_layer AQUI, UMA VEZ
+                print("🔧 DEBUG: Carregando ibge_layer no background...")
+                
+                # Força carregamento limpo do shapefile
+                self.ibge_layer = None  # Limpa qualquer instância anterior
+                success = self.load_ibge_shapefile()
+                
+                if success and self.ibge_layer and self.ibge_layer.isValid():
+                    print(f"✅ DEBUG: ibge_layer carregado com sucesso: {self.ibge_layer.featureCount()} feições")
+                    
+                    # Teste rápido para confirmar que funciona
+                    test_features = list(self.ibge_layer.getFeatures())[:1]
+                    if test_features:
+                        print(f"✅ DEBUG: Teste de acesso OK - primeira feição: {test_features[0]['nome']}")
+                else:
+                    print("❌ DEBUG: FALHA CRÍTICA ao carregar ibge_layer")
+                    self.shapefile_ready = False
+                    self.update_notes("❌ ERRO: Shapefile IBGE não pode ser carregado!", "error")
+                    return
                 
             self.shapefile_ready = True
             
@@ -3523,7 +3560,7 @@ class DesagregaBiomasBRDialog(QDialog):
                 
                 url = url_template.format(
                     uf_lower=shapefile_data['uf'].lower(),
-                    biome='AMZ' if self.selected_biome == 'Amazônia' else 'CER',
+                    bioma='AMZ' if self.selected_biome == 'Amazônia' else 'CER',
                     ano=self.terraclass_year,
                     municipio_normalizado=self.normalize_terraclass_text(self.terraclass_municipality),
                     UF=shapefile_data['uf'],
@@ -3536,7 +3573,7 @@ class DesagregaBiomasBRDialog(QDialog):
                 url_template = url_templates['base'] + url_templates['estadual']
                 
                 url = url_template.format(
-                    biome='AMZ' if self.selected_biome == 'Amazônia' else 'CER',
+                    bioma='AMZ' if self.selected_biome == 'Amazônia' else 'CER',
                     ano=self.terraclass_year,
                     estado_normalizado=self.normalize_terraclass_text(self.terraclass_state),
                     geocodigo_uf=shapefile_data['cod_uf']
