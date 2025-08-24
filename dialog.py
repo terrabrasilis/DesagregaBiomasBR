@@ -1360,7 +1360,7 @@ class DesagregaBiomasBRDialog(QDialog):
         elif self.selected_theme == "ÁREA QUEIMADA":
             # Informações específicas ÁREA QUEIMADA
             if hasattr(self, 'queimadas_data_type') and self.queimadas_data_type:
-                type_text = "Anual (dissolvido)" if self.queimadas_data_type == "anual" else "Mensal (original)"
+                type_text = "Anual" if self.queimadas_data_type == "anual" else "Mensal"
                 notes_parts.append(f"📈 Tipo: {type_text}")
             
             # Período temporal
@@ -8037,7 +8037,7 @@ class DesagregaBiomasBRDialog(QDialog):
         
         self.queimadas_data_type_button_group = QButtonGroup()
         
-        self.radio_queimadas_anual = QRadioButton("Anual (dados do ano unidos e dissolvidos)")
+        self.radio_queimadas_anual = QRadioButton("Anual (todos os meses do ano unidos)")
         self.radio_queimadas_anual.setToolTip("Baixa todos os meses do ano selecionado e os une em um único arquivo")
         self.radio_queimadas_anual.setChecked(True)  # Padrão anual
         
@@ -8191,7 +8191,7 @@ class DesagregaBiomasBRDialog(QDialog):
             notes_parts = [f"📊 Tema: ÁREA QUEIMADA", f"🌿 Bioma: {self.selected_biome}"]
             
             if hasattr(self, 'queimadas_data_type') and self.queimadas_data_type:
-                type_text = "Anual (dissolvido)" if self.queimadas_data_type == "anual" else "Mensal (original)"
+                type_text = "Anual" if self.queimadas_data_type == "anual" else "Mensal"
                 notes_parts.append(f"📈 Tipo: {type_text}")
             
             # Informações de período
@@ -8294,21 +8294,29 @@ class DesagregaBiomasBRDialog(QDialog):
             # Período baseado no tipo
             if self.queimadas_data_type == "anual":
                 period = f"{self.queimadas_year}"
-                data_type = "anual_dissolvido"
+                data_type = "anual"
             else:  # mensal
                 year, month, _ = self.queimadas_month.split('_')
                 period = f"{year}{month}"
-                data_type = "mensal_original"
+                data_type = "mensal"
             
             # Tipo de corte
             cut_name = self.get_cut_option_name()
             
-            # Nome final
-            filename = f"{theme}_{biome}_{period}_{data_type}_{cut_name}"
+            # Nome final - ajustado para área queimada
+            if self.cut_option == 0:  # Todo o bioma
+                # Para área queimada, não adiciona "SemCorte" pois sempre há algum corte
+                filename = f"{theme}_{biome}_{period}_{data_type}"
+            else:
+                # Para outros tipos de corte, adiciona o nome do corte
+                filename = f"{theme}_{biome}_{period}_{data_type}_{cut_name}"
             
             # Limita tamanho do nome
             if len(filename) > 100:
-                filename = f"{theme}_{biome}_{period}_{cut_name}"
+                if self.cut_option == 0:
+                    filename = f"{theme}_{biome}_{period}"
+                else:
+                    filename = f"{theme}_{biome}_{period}_{cut_name}"
             
             print(f"📁 DEBUG: Nome ÁREA QUEIMADA gerado: {filename}")
             return filename
