@@ -45,6 +45,20 @@ Plugin para QGIS que oferece um **assistente guiado** para seleção e desagrega
 - Conexão com internet (para download dos dados)
 - Sistema operacional: Windows, Linux ou macOS
 
+### 🌐 **Compatibilidade Multiplataforma**
+O plugin foi desenvolvido com **compatibilidade total** entre sistemas operacionais:
+
+- ✅ **Windows** - Totalmente suportado
+- ✅ **Linux** - Totalmente suportado  
+- ✅ **macOS** - Totalmente suportado
+
+**Funcionalidades que funcionam em todos os SOs:**
+- 📁 **Cache inteligente** - Arquivos temporários salvos na pasta correta de cada sistema
+- 🗂️ **Configurações dinâmicas** - `config_cache.json` sempre no local apropriado
+- 🗺️ **Shapefile IBGE** - Download automático funciona em qualquer plataforma
+- 🔄 **Caminhos de arquivo** - Separadores corretos automaticamente (`\` no Windows, `/` no Unix)
+- 📂 **Permissões** - Gerenciamento automático de permissões de diretório
+
 ### Instalação via Repositório Oficial QGIS
 1. Abra o QGIS
 2. Vá em `Plugins > Gerenciar e Instalar Plugins`
@@ -231,6 +245,15 @@ DesagregaBiomasBR/
 - **Download sob demanda** apenas quando necessário
 - **Funcionamento offline** com dados em cache
 
+### **Compatibilidade Cross-Platform**
+- **API Python padrão** - Usa `tempfile.gettempdir()` para compatibilidade total
+- **Caminhos automáticos** - `os.path.join()` garante separadores corretos
+- **Diretórios de cache por SO:**
+  - **Windows**: `C:\Users\[usuário]\AppData\Local\Temp\DesagregaBiomasBR\`
+  - **Linux**: `/tmp/DesagregaBiomasBR/`
+  - **macOS**: `/var/folders/[hash]/T/DesagregaBiomasBR/`
+- **Permissões automáticas** - Criação segura de diretórios em qualquer sistema
+
 ### **Processamento de Dados**
 - Download automático via WFS/HTTP com suporte a redirecionamentos
 - Corte espacial usando algoritmos nativos do QGIS
@@ -278,11 +301,17 @@ O plugin mantém suas configurações sempre atualizadas através de um sistema 
 
 **Configurações desatualizadas:**
 - ✅ **Solução automática**: Plugin atualiza configurações diariamente
-- **Cache manual**: Delete `%TEMP%\DesagregaBiomasBR\config_cache.json` para forçar atualização
+- **Limpeza manual do cache por SO:**
+  - **Windows**: Delete `%TEMP%\DesagregaBiomasBR\config_cache.json`
+  - **Linux**: Delete `/tmp/DesagregaBiomasBR/config_cache.json`
+  - **macOS**: Delete `/var/folders/.../T/DesagregaBiomasBR/config_cache.json`
 
 **Shapefile IBGE não encontrado:**
 - ✅ **Download automático**: Plugin baixa shapefile na primeira execução
-- **Cache manual**: Delete `%TEMP%\DesagregaBiomasBR\shapefile\` para redownload
+- **Limpeza manual do cache por SO:**
+  - **Windows**: Delete pasta `%TEMP%\DesagregaBiomasBR\shapefile\`
+  - **Linux**: Delete pasta `/tmp/DesagregaBiomasBR/shapefile/`
+  - **macOS**: Delete pasta `/var/folders/.../T/DesagregaBiomasBR/shapefile/`
 
 **Geometrias inválidas:**
 - Plugin aplica correção automática usando `native:fixgeometries`
