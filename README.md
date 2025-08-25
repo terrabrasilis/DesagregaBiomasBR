@@ -41,20 +41,23 @@ Plugin para QGIS que oferece um **assistente guiado** para seleção e desagrega
 ## 🔧 Instalação
 
 ### Requisitos
-- QGIS 3.x
+- QGIS 3.16 ou superior
 - Conexão com internet (para download dos dados)
+- Sistema operacional: Windows, Linux ou macOS
+
+### Instalação via Repositório Oficial QGIS
+1. Abra o QGIS
+2. Vá em `Plugins > Gerenciar e Instalar Plugins`
+3. Na aba "Todos", procure por "DesagregaBiomasBR"
+4. Clique em "Instalar Plugin"
+5. Ative o plugin marcando a caixa de seleção
 
 ### Instalação Manual
-1. Baixe ou clone este repositório
-2. Copie a pasta `DesagregaBiomasBR` para o diretório de plugins do QGIS:
-   - **Windows**: `C:\Users\[usuário]\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\`
-   - **Linux**: `~/.local/share/QGIS/QGIS3/profiles/default/python/plugins/`
-   - **macOS**: `~/Library/Application Support/QGIS/QGIS3/profiles/default/python/plugins/`
-3. Abra o QGIS e ative o plugin em `Plugins > Gerenciar e Instalar Plugins`
-
-### Scripts de Instalação
-- **Windows**: Execute `install.bat` como Administrador
-- **Linux/macOS**: Execute `./install.sh`
+1. Baixe o arquivo ZIP da última versão na página [Releases](https://github.com/geodenilson/DesagregaBiomasBR/releases)
+2. No QGIS, vá em `Plugins > Gerenciar e Instalar Plugins`
+3. Na aba "Instalar do ZIP", selecione o arquivo baixado
+4. Clique em "Instalar Plugin"
+5. Ative o plugin na aba "Instalados"
 
 ## 🚀 Como Usar
 
@@ -181,24 +184,18 @@ DesagregaBiomasBR/
 ├── dialog.py                # Interface e lógica principal
 ├── metadata.txt             # Metadados do plugin QGIS
 ├── README.md                # Este arquivo
+├── LICENSE                  # Licença GPL-3.0
 ├── resources.py             # Recursos compilados
 ├── resources.qrc           # Definição de recursos
 ├── estilo_terraclass.qml   # Simbologia TERRACLASS
-├── install.bat             # Script instalação Windows
-├── install.sh              # Script instalação Linux/macOS
-├── icones/                 # Ícones da interface
-│   ├── deter.png
-│   ├── layers.png
-│   ├── mapa.png
-│   ├── prodes.png
-│   └── queimadas.png
-└── shapefile/              # Dados IBGE para cortes
-    ├── BC250, 2023.cpg
-    ├── BC250, 2023.dbf
-    ├── BC250, 2023.prj
-    ├── BC250, 2023.shp
-    ├── BC250, 2023.shx
-    └── BC250, 2023.shp.xml
+├── listas.json             # Configurações dinâmicas
+├── BC250_2023.zip          # Shapefile IBGE (limites)
+└── icones/                 # Ícones da interface
+    ├── deter.png
+    ├── layers.png
+    ├── mapa.png
+    ├── prodes.png
+    └── queimadas.png
 ```
 
 ## 🔗 **URLs dos Serviços**
@@ -337,6 +334,19 @@ Para detalhes completos, consulte o arquivo [LICENSE](LICENSE) neste repositóri
 
 Este plugin é desenvolvido para facilitar o acesso aos dados públicos de monitoramento ambiental brasileiro, respeitando as licenças e termos de uso das instituições fornecedoras dos dados.
 
+## 🆕 **Versão Atual: 1.0**
+
+### Novidades principais:
+- ✨ **Sistema de configuração dinâmica** - URLs e parâmetros sempre atualizados
+- 🚀 **Download automático de dependências** - Shapefile IBGE baixado automaticamente
+- 🔄 **Cache inteligente** - Funciona offline com dados em cache
+- 🎯 **Interface responsiva** - Ajuste automático baseado nas seleções
+- 📊 **4 temas suportados** - PRODES, DETER, TERRACLASS, ÁREA QUEIMADA
+- 🌿 **Todos os biomas brasileiros** - Cobertura completa
+- ✂️ **Múltiplas opções de corte** - Flexibilidade máxima
+- 📁 **Formatos modernos** - Shapefile e GeoPackage
+- 🗺️ **SIRGAS 2000** - Sistema de coordenadas oficial brasileiro
+
 ## 🤝 **Contribuições**
 
 Contribuições são bem-vindas! Para melhorias ou correções:
@@ -350,9 +360,16 @@ Contribuições são bem-vindas! Para melhorias ou correções:
 ## 📧 **Suporte**
 
 Para dúvidas ou problemas:
-- Abra uma issue neste repositório
-- Consulte os logs de debug do QGIS
-- Verifique a documentação das fontes de dados originais
+- 🐛 **Issues**: [Abra uma issue neste repositório](https://github.com/geodenilson/DesagregaBiomasBR/issues)
+- 📋 **Logs**: Consulte "QGIS > Exibir > Painéis > Log de Mensagens > DesagregaBiomasBR"
+- 📚 **Documentação**: Verifique as fontes de dados originais (INPE, EMBRAPA, IBGE)
+- 📧 **Email**: geodenilson@gmail.com
+
+### Links úteis:
+- 🌐 **TerraBrasilis**: [Portal oficial PRODES/DETER](https://terrabrasilis.dpi.inpe.br/)
+- 🌍 **TERRACLASS**: [Portal oficial](https://www.terraclass.gov.br/)
+- 🔥 **Queimadas INPE**: [Portal oficial](https://queimadas.dpi.inpe.br/)
+- 🗺️ **IBGE**: [Base cartográfica](https://www.ibge.gov.br/geociencias/)
 
 ## 🙏 **Agradecimentos**
 
