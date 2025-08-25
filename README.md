@@ -179,7 +179,6 @@ Plugin para QGIS que oferece um **assistente guiado** para seleção e desagrega
 
 ```
 DesagregaBiomasBR/
-├── __init__.py              # Inicialização do plugin
 ├── plugin_main.py           # Configuração principal
 ├── dialog.py                # Interface e lógica principal
 ├── metadata.txt             # Metadados do plugin QGIS
@@ -219,14 +218,14 @@ DesagregaBiomasBR/
 
 ## ⚙️ **Configurações Técnicas**
 
-### **Sistema de Configuração Dinâmica** ⭐ *NOVO*
+### **Sistema de Configuração Dinâmica**
 - **Atualização automática** via arquivo JSON no GitHub
 - **Cache local** com validade de 24 horas para configurações
 - **Fallback robusto** para funcionamento offline
 - **URLs e parâmetros** atualizados automaticamente sem reinstalar plugin
 - **Suporte a redirecionamentos** HTTP para downloads grandes
 
-### **Sistema de Cache Inteligente** ⭐ *NOVO*
+### **Sistema de Cache Inteligente**
 - **Shapefile IBGE** baixado automaticamente (cache de 30 dias)
 - **Configurações JSON** atualizadas diariamente
 - **Download sob demanda** apenas quando necessário
@@ -239,13 +238,6 @@ DesagregaBiomasBR/
 - Reprojeção automática para SIRGAS 2000
 - Merge de múltiplas camadas quando necessário
 
-### **Otimizações**
-- Download paginado para grandes volumes de dados
-- Sistema de cache inteligente para múltiplas tentativas
-- Verificação de abort durante processamentos longos
-- Limpeza automática de arquivos temporários
-- URLs dinâmicas sempre atualizadas
-
 ### **Logs e Debug**
 - Sistema de logs persistentes usando QgsMessageLog
 - Mensagens de debug detalhadas para resolução de problemas
@@ -253,7 +245,7 @@ DesagregaBiomasBR/
 - Relatórios de estatísticas de processamento
 - Logs de redirecionamentos HTTP e cache
 
-## 🔄 **Sistema de Atualizações Automáticas** ⭐ *NOVO*
+## 🔄 **Sistema de Atualizações Automáticas**
 
 ### **Configurações Dinâmicas**
 O plugin mantém suas configurações sempre atualizadas através de um sistema inovador:
