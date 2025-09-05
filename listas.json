@@ -4,7 +4,7 @@
   "description": "Configurações dinâmicas para o plugin DesagregaBiomasBR - Mantém URLs, biomas, anos e classes atualizados",
   
   "biomas": {
-    "PRODES": ["Amazônia", "Amazônia Legal", "Cerrado", "Caatinga", "Pantanal", "Pampa", "Mata Atlântica"],
+    "PRODES": ["Amazônia Legal", "Cerrado", "Caatinga", "Pantanal", "Pampa", "Mata Atlântica"],
     "DETER": ["Cerrado", "Amazônia Legal"],
     "TERRACLASS": ["Amazônia", "Cerrado"],
     "ÁREA QUEIMADA": ["Amazônia", "Amazônia Legal", "Cerrado", "Caatinga", "Pantanal", "Pampa", "Mata Atlântica"]
