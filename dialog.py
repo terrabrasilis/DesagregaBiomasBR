@@ -1255,9 +1255,13 @@ class DesagregaBiomasBRDialog(QDialog):
         dest_label = QLabel("Pasta de destino:")
         self.dest_path_edit = QTextEdit()
         self.dest_path_edit.setMaximumHeight(25)
+        # Define tamanho mínimo para evitar compressão quando a barra de progresso aparece
+        self.dest_path_edit.setMinimumWidth(300)
         self.dest_path_edit.setText("")  # Deixa em branco para usuário configurar
         self.browse_button = QPushButton("📂 Procurar...")
         self.browse_button.clicked.connect(self.browse_destination_folder)
+        # Define tamanho mínimo para o botão também
+        self.browse_button.setMinimumWidth(100)
         
         dest_layout.addWidget(dest_label)
         dest_layout.addWidget(self.dest_path_edit)
@@ -1298,6 +1302,8 @@ class DesagregaBiomasBRDialog(QDialog):
         
         # Status do Processamento
         status_group = QGroupBox("⚡ Status do Processamento")
+        # Define altura mínima para evitar compressão
+        status_group.setMinimumHeight(80)
         status_layout = QVBoxLayout()
         
         self.status_label = QLabel("💡 Configure a pasta de destino e clique em 'Iniciar Processamento'")
@@ -1307,6 +1313,8 @@ class DesagregaBiomasBRDialog(QDialog):
         self.progress_bar = QProgressBar()
         self.progress_bar.setRange(0, 0)  # Modo indeterminado
         self.progress_bar.setVisible(False)  # Inicialmente oculta
+        # Define altura fixa para a barra de progresso para manter consistência
+        self.progress_bar.setFixedHeight(20)
         
         status_layout.addWidget(self.status_label)
         status_layout.addWidget(self.progress_bar)
@@ -1530,6 +1538,15 @@ class DesagregaBiomasBRDialog(QDialog):
         # Mostra barra de progresso e ativa modo download
         self.progress_bar.setVisible(True)
         self.status_label.setText(f"🔄 Processando dados {self.selected_theme}...")
+        
+        # Ajusta a janela para acomodar a barra de progresso sem comprimir outros elementos
+        # Salva o tamanho atual da janela
+        current_height = self.height()
+        # Adiciona altura extra para a barra de progresso (20px + margens)
+        new_height = current_height + 30
+        self.setMinimumHeight(new_height)
+        self.resize(self.width(), new_height)
+        
         self.start_download_mode()  # Ativa modo download com botão abortar
         
         # Inicia processamento baseado no tema
@@ -9286,6 +9303,12 @@ class DesagregaBiomasBRDialog(QDialog):
         
         # Esconde barra de progresso
         self.progress_bar.setVisible(False)
+        
+        # Restaura o tamanho da janela (remove a altura extra da barra de progresso)
+        current_height = self.height()
+        new_height = max(450, current_height - 30)  # Remove 30px mas mantém altura mínima
+        self.setMinimumHeight(new_height)
+        self.resize(self.width(), new_height)
         
         # Restaura botões principais
         self.btn_process.setVisible(True)
