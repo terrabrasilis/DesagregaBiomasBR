@@ -101,7 +101,7 @@
   "terraclass": {
     "anos": {
       "Amazônia": [2008, 2010, 2012, 2014, 2018, 2020, 2022],
-      "Cerrado": [2018, 2020, 2022]
+      "Cerrado": [2018, 2020, 2022, 2024]
     },
     "urls": {
       "base": "https://www.terraclass.gov.br/helpers/terraclass_data4download_2024/V/",
