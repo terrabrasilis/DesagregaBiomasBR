@@ -351,19 +351,47 @@ class DesagregaBiomasBRDialog(QDialog):
             print(f"❌ DEBUG: Erro ao aplicar configurações dinâmicas: {e}")
 
     def get_dynamic_prodes_urls(self, biome):
-        """Retorna URLs do PRODES usando configuração dinâmica"""
+        """Retorna URLs do PRODES usando configuração dinâmica
+        
+        NOTA: Para o bioma Amazônia, usa-se o WFS da Amazônia Legal pois:
+        1. O WFS do bioma Amazônia tem problemas de limitação de polígonos (para em ~200k)
+        2. A Amazônia Legal cobre completamente o bioma Amazônia
+        3. O corte pelo limite do bioma será aplicado depois se necessário
+        """
+        import unicodedata
+        
+        # DEBUG DETALHADO: Verifica encoding do bioma recebido
+        print(f"🔍 DEBUG get_dynamic_prodes_urls: biome recebido = '{biome}'")
+        print(f"🔍 DEBUG: repr(biome) = {repr(biome)}")
+        print(f"🔍 DEBUG: len(biome) = {len(biome) if biome else 'None'}")
+        
+        # CORREÇÃO: Para Amazônia, usar sempre WFS da Amazônia Legal (mais estável)
+        # Normaliza strings para NFC para garantir comparação correta
+        effective_biome = biome
+        biome_normalized = unicodedata.normalize('NFC', biome) if biome else biome
+        amazonia_check = unicodedata.normalize('NFC', 'Amazônia')
+        
+        print(f"🔍 DEBUG: biome_normalized = '{biome_normalized}'")
+        print(f"🔍 DEBUG: amazonia_check = '{amazonia_check}'")
+        print(f"🔍 DEBUG: biome_normalized == amazonia_check = {biome_normalized == amazonia_check}")
+        
+        if biome_normalized == amazonia_check:
+            effective_biome = 'Amazônia Legal'
+            print(f"🔄 DEBUG: Bioma Amazônia selecionado - usando WFS da Amazônia Legal (mais estável)")
+            # Marca que precisa aplicar corte do bioma depois
+            self._needs_amazonia_biome_cut = True
+        else:
+            self._needs_amazonia_biome_cut = False
+            print(f"🔍 DEBUG: Bioma NÃO é Amazônia, usando: {effective_biome}")
+        
         if self.config_data and 'prodes' in self.config_data and 'urls' in self.config_data['prodes']:
-            return self.config_data['prodes']['urls'].get(biome)
+            return self.config_data['prodes']['urls'].get(effective_biome)
         
         # Fallback para URLs hardcoded
         fallback_urls = {
             'Pantanal': {
                 'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pantanal-nb/accumulated_deforestation_2000/ows',
                 'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-pantanal-nb/yearly_deforestation/ows'
-            },
-            'Amazônia': {
-                'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-amazon-nb/accumulated_deforestation_2007_biome/ows',
-                'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-amazon-nb/yearly_deforestation_biome/ows'
             },
             'Cerrado': {
                 'accumulated': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-cerrado-nb/accumulated_deforestation_2000/ows',
@@ -386,7 +414,7 @@ class DesagregaBiomasBRDialog(QDialog):
                 'yearly': 'https://terrabrasilis.dpi.inpe.br/geoserver/prodes-legal-amz/yearly_deforestation/ows'
             }
         }
-        return fallback_urls.get(biome)
+        return fallback_urls.get(effective_biome)
 
     def get_dynamic_terraclass_urls(self):
         """Retorna templates de URL do TERRACLASS usando configuração dinâmica"""
@@ -760,6 +788,9 @@ class DesagregaBiomasBRDialog(QDialog):
         self.selected_field = None
         self.selected_element = None
         self.drawn_rectangle = None
+        
+        # Flag para corte automático do bioma Amazônia
+        self._needs_amazonia_biome_cut = False
         
         # Dados IBGE
         self.ibge_layer = None
@@ -1673,10 +1704,16 @@ class DesagregaBiomasBRDialog(QDialog):
             self.end_download_mode(success=False)
 
     def download_wfs_layer(self, url, layer_name):
-        """Baixa uma camada WFS com paginação automática - NOVA ESTRATÉGIA SEPARADA"""
+        """Baixa uma camada WFS com paginação automática - ESTRATÉGIA SIMPLIFICADA
+        
+        ESTRATÉGIA: 
+        - Sempre usa CQL_FILTER para filtros temporais (quando disponível)
+        - NUNCA usa BBOX no WFS (cortes espaciais são feitos depois via geoprocessamento)
+        - Isso garante que o filtro temporal seja aplicado no servidor, reduzindo volume de download
+        """
         try:
             print(f"🔄 DEBUG: Baixando dados WFS com paginação: {layer_name}")
-            print(f"🔄 DEBUG: NOVA ESTRATÉGIA - Filtros espaciais e temporais separados")
+            print(f"🔄 DEBUG: ESTRATÉGIA SIMPLIFICADA - CQL_FILTER no WFS, cortes espaciais depois")
             
             # Extrai typename da URL base
             typename = self.extract_typename_from_url(url, layer_name)
@@ -1687,29 +1724,12 @@ class DesagregaBiomasBRDialog(QDialog):
             # Separa URL base dos parâmetros
             base_url = url.split('?')[0]
             
-            # NOVA ESTRATÉGIA: Extrai filtro CQL mas NÃO usa junto com BBOX
-            original_cql_filter = None
+            # Extrai filtro CQL da URL (será aplicado no WFS)
+            cql_filter = None
             if 'CQL_FILTER=' in url:
-                original_cql_filter = url.split('CQL_FILTER=')[1].split('&')[0]
-                original_cql_filter = original_cql_filter.replace('%20', ' ').replace('%27', "'")
-                print(f"🔍 DEBUG: Filtro temporal extraído (aplicado depois): {original_cql_filter}")
-            # CORREÇÃO: Verifica cut_option ANTES de tentar extrair BBOX
-            bbox_filter = None
-            has_spatial_cut = False
-            
-            if hasattr(self, 'cut_option') and self.cut_option is not None and self.cut_option != 0:
-                print(f"🗺️ DEBUG: Usuário selecionou corte espacial (cut_option={self.cut_option})")
-                bbox_filter = self.get_cut_geometry_bbox()
-                has_spatial_cut = bbox_filter is not None
-                
-                if has_spatial_cut:
-                    print(f"✅ DEBUG: BBOX extraído: {bbox_filter}")
-                else:
-                    print(f"⚠️ DEBUG: BBOX não pôde ser extraído - corte espacial solicitado mas falhou")
-            else:
-                print(f"🌍 DEBUG: Usuário selecionou BIOMA TODO (cut_option={getattr(self, 'cut_option', 'None')})")
-                print(f"🌍 DEBUG: Nenhum BBOX necessário - baixando bioma completo")
-            
+                cql_filter = url.split('CQL_FILTER=')[1].split('&')[0]
+                cql_filter = cql_filter.replace('%20', ' ').replace('%27', "'")
+                print(f"📅 DEBUG: Filtro CQL extraído: {cql_filter}")
             
             # Configuração de paginação
             page_size = 50000  # Tamanho de cada página
@@ -1717,13 +1737,11 @@ class DesagregaBiomasBRDialog(QDialog):
             all_temp_files = []
             total_features = 0
             
-            if has_spatial_cut:
-                print(f"🗺️ DEBUG: ESTRATÉGIA ESPACIAL: Download com BBOX apenas")
-                print(f"🗺️ DEBUG: BBOX: {bbox_filter}")
-                print(f"📊 DEBUG: Iniciando download paginado COM BBOX (páginas de {page_size} feições)")
+            if cql_filter:
+                print(f"📅 DEBUG: Download com CQL_FILTER: {cql_filter}")
             else:
-                print(f"🌍 DEBUG: ESTRATÉGIA GLOBAL: Download sem filtros")
-                print(f"📊 DEBUG: Iniciando download paginado SEM FILTROS (páginas de {page_size} feições)")
+                print(f"🌍 DEBUG: Download sem filtros - dados completos do bioma")
+            print(f"📊 DEBUG: Iniciando download paginado (páginas de {page_size} feições)")
             
             import requests
             import tempfile
@@ -1739,33 +1757,21 @@ class DesagregaBiomasBRDialog(QDialog):
                 
                 print(f"📄 DEBUG: Baixando página {page_number} (índice {start_index})...")
                 
-                # NOVA ESTRATÉGIA: Parâmetros diferentes baseados na presença de corte espacial
-                if has_spatial_cut:
-                    # Parâmetros APENAS com BBOX (sem CQL_FILTER)
-                    params = {
-                "service": "WFS",
-                        "version": "2.0.0",
-                "request": "GetFeature",
-                "typeName": typename,
-                        "outputFormat": "GML2",
-                        "srsName": "EPSG:4674",
-                        "count": page_size,
-                        "startIndex": start_index,
-                        "BBOX": bbox_filter  # APENAS filtro espacial
-                    }
-                else:
-                    # Parâmetros SEM filtros (bioma completo)
-                    params = {
-                        "service": "WFS",
-                        "version": "2.0.0",
-                        "request": "GetFeature",
-                        "typeName": typename,
-                        "outputFormat": "GML2",
-                        "srsName": "EPSG:4674",
-                        "count": page_size,
-                        "startIndex": start_index
-                        # SEM BBOX e SEM CQL_FILTER
-                    }
+                # Parâmetros WFS - sempre inclui CQL_FILTER quando disponível
+                params = {
+                    "service": "WFS",
+                    "version": "2.0.0",
+                    "request": "GetFeature",
+                    "typeName": typename,
+                    "outputFormat": "GML2",
+                    "srsName": "EPSG:4674",
+                    "count": page_size,
+                    "startIndex": start_index
+                }
+                
+                # Adiciona CQL_FILTER se disponível
+                if cql_filter:
+                    params["CQL_FILTER"] = cql_filter
                 
                 # Atualiza notas com progresso
                 if hasattr(self, 'update_notes'):
@@ -1887,39 +1893,18 @@ class DesagregaBiomasBRDialog(QDialog):
                 else:
                     print(f"⚠️ DEBUG: Fix geometry falhou nos dados PRODES, usando layer original")
                 
-                # NOVA ESTRATÉGIA: Aplica filtro temporal APÓS o download (se necessário)
-                if original_cql_filter:
-                    print(f"⏰ DEBUG: Aplicando filtro temporal nos dados baixados...")
+                # Filtro temporal já foi aplicado no WFS via CQL_FILTER (se havia filtro)
+                # Cortes espaciais serão aplicados depois via geoprocessamento
+                if cql_filter:
+                    print(f"✅ DEBUG: Filtro temporal aplicado no WFS via CQL_FILTER")
                     if hasattr(self, 'update_notes'):
-                        self.update_notes(f"⏰ Aplicando filtro temporal: {original_cql_filter}", "status")
-                    
-                    filtered_layer = self.apply_temporal_filter(final_layer, original_cql_filter, layer_name)
-                    if filtered_layer and filtered_layer.isValid():
-                        # CORREÇÃO 2: Força projeção também na layer filtrada
-                        if filtered_layer.crs() != target_crs:
-                            print(f"🗺️ DEBUG: Corrigindo projeção da layer filtrada para SIRGAS 2000 (EPSG:4674)")
-                            filtered_layer.setCrs(target_crs)
-                        
-                        filtered_count = filtered_layer.featureCount()
-                        print(f"✅ DEBUG: Filtro temporal aplicado: {filtered_count} feições")
-                        
-                        # Atualiza notas de sucesso
-                        if hasattr(self, 'update_notes'):
-                            self.update_notes(f"✅ WFS baixado e filtrado: {filtered_count} feições")
-                        
-                        return filtered_layer
-                    else:
-                        print(f"⚠️ DEBUG: Falha no filtro temporal, retornando dados completos")
-                        # Atualiza notas de sucesso
-                        if hasattr(self, 'update_notes'):
-                            self.update_notes(f"✅ WFS baixado: {final_count} feições (sem filtro temporal)")
-                        return final_layer
+                        self.update_notes(f"✅ WFS baixado com filtro: {final_count} feições ({len(all_temp_files)} páginas)", "status")
                 else:
-                    print(f"✅ DEBUG: Sem filtro temporal necessário")
-                    # Atualiza notas de sucesso
+                    print(f"✅ DEBUG: Download completo (sem filtro temporal)")
                     if hasattr(self, 'update_notes'):
                         self.update_notes(f"✅ WFS baixado: {final_count} feições ({len(all_temp_files)} páginas)", "status")
-                    return final_layer
+                
+                return final_layer
             else:
                 print(f"❌ DEBUG: Falha ao criar layer final")
                 return None
@@ -1931,67 +1916,43 @@ class DesagregaBiomasBRDialog(QDialog):
             return None
 
     def download_wfs_layer_fallback(self, url, layer_name):
-        """Fallback para WFS 1.0 sem paginação - NOVA ESTRATÉGIA SEPARADA"""
+        """Fallback para WFS 1.0 sem paginação - ESTRATÉGIA SIMPLIFICADA
+        
+        ESTRATÉGIA: 
+        - Sempre usa CQL_FILTER para filtros temporais (quando disponível)
+        - NUNCA usa BBOX no WFS (cortes espaciais são feitos depois via geoprocessamento)
+        """
         try:
             print(f"🔄 DEBUG: Fallback - Baixando dados WFS sem paginação: {layer_name}")
-            print(f"🔄 DEBUG: ESTRATÉGIA SEPARADA também no fallback")
+            print(f"🔄 DEBUG: ESTRATÉGIA SIMPLIFICADA - CQL_FILTER no WFS, cortes espaciais depois")
             
             # Extrai typename da URL base
             typename = self.extract_typename_from_url(url, layer_name)
-            # CORREÇÃO: Verifica cut_option ANTES de tentar extrair BBOX (fallback)
-            bbox_filter = None
-            has_spatial_cut = False
-            
-            if hasattr(self, 'cut_option') and self.cut_option is not None and self.cut_option != 0:
-                print(f"🗺️ DEBUG: FALLBACK - Usuário selecionou corte espacial (cut_option={self.cut_option})")
-                bbox_filter = self.get_cut_geometry_bbox()
-                has_spatial_cut = bbox_filter is not None
-                
-                if has_spatial_cut:
-                    print(f"✅ DEBUG: FALLBACK - BBOX extraído: {bbox_filter}")
-                else:
-                    print(f"⚠️ DEBUG: FALLBACK - BBOX não pôde ser extraído")
-            else:
-                print(f"🌍 DEBUG: FALLBACK - Usuário selecionou BIOMA TODO (cut_option={getattr(self, 'cut_option', 'None')})")
-                print(f"🌍 DEBUG: FALLBACK - Nenhum BBOX necessário")
             base_url = url.split('?')[0]
             
-            # NOVA ESTRATÉGIA: Extrai filtro CQL mas NÃO usa junto com BBOX
-            original_cql_filter = None
+            # Extrai filtro CQL da URL (será aplicado no WFS)
+            cql_filter = None
             if 'CQL_FILTER=' in url:
-                original_cql_filter = url.split('CQL_FILTER=')[1].split('&')[0]
-                original_cql_filter = original_cql_filter.replace('%20', ' ').replace('%27', "'")
-                print(f"🔍 DEBUG: Filtro temporal extraído (aplicado depois): {original_cql_filter}")
+                cql_filter = url.split('CQL_FILTER=')[1].split('&')[0]
+                cql_filter = cql_filter.replace('%20', ' ').replace('%27', "'")
+                print(f"📅 DEBUG: Filtro CQL extraído: {cql_filter}")
             
-            # Verifica se há filtro espacial (BBOX)
-            bbox_filter = self.get_cut_geometry_bbox()
-            has_spatial_cut = bbox_filter is not None
+            # Parâmetros WFS - sempre inclui CQL_FILTER quando disponível
+            params = {
+                "service": "WFS",
+                "version": "1.0.0", 
+                "request": "GetFeature",
+                "typeName": typename,
+                "outputFormat": "GML2",
+                "srsName": "EPSG:4674"
+            }
             
-            # NOVA ESTRATÉGIA: Parâmetros diferentes baseados na presença de corte espacial
-            if has_spatial_cut:
-                print(f"🗺️ DEBUG: FALLBACK com BBOX apenas")
-                # Parâmetros APENAS com BBOX (sem CQL_FILTER)
-                params = {
-                    "service": "WFS",
-                    "version": "1.0.0", 
-                    "request": "GetFeature",
-                    "typeName": typename,
-                    "outputFormat": "GML2",
-                    "srsName": "EPSG:4674",
-                    "BBOX": bbox_filter  # APENAS filtro espacial
-                }
+            # Adiciona CQL_FILTER se disponível
+            if cql_filter:
+                params["CQL_FILTER"] = cql_filter
+                print(f"📅 DEBUG: FALLBACK com CQL_FILTER: {cql_filter}")
             else:
-                print(f"🌍 DEBUG: FALLBACK sem filtros")
-                # Parâmetros SEM filtros
-                params = {
-                    "service": "WFS",
-                    "version": "1.0.0", 
-                    "request": "GetFeature",
-                    "typeName": typename,
-                    "outputFormat": "GML2",
-                    "srsName": "EPSG:4674"
-                    # SEM BBOX e SEM CQL_FILTER
-                }
+                print(f"🌍 DEBUG: FALLBACK sem filtros - dados completos")
             
             print(f"🌐 DEBUG: URL base: {base_url}")
             print(f"📋 DEBUG: Parâmetros: {params}")
@@ -2048,25 +2009,14 @@ class DesagregaBiomasBRDialog(QDialog):
             else:
                 print(f"⚠️ DEBUG: Fix geometry falhou nos dados PRODES (fallback), usando layer original")
             
-            # NOVA ESTRATÉGIA: Aplica filtro temporal APÓS o download (se necessário)
-            if original_cql_filter:
-                print(f"⏰ DEBUG: Aplicando filtro temporal no fallback...")
-                filtered_layer = self.apply_temporal_filter(layer, original_cql_filter, layer_name)
-                if filtered_layer and filtered_layer.isValid():
-                    # CORREÇÃO 2: Força projeção na layer filtrada do fallback
-                    if filtered_layer.crs() != target_crs:
-                        print(f"🗺️ DEBUG: Corrigindo projeção da layer filtrada fallback para SIRGAS 2000 (EPSG:4674)")
-                        filtered_layer.setCrs(target_crs)
-                    
-                    filtered_count = filtered_layer.featureCount()
-                    print(f"✅ DEBUG: Filtro temporal aplicado no fallback: {filtered_count} feições")
-                    return filtered_layer
-                else:
-                    print(f"⚠️ DEBUG: Falha no filtro temporal fallback, retornando dados completos")
-                    return layer
+            # Filtro temporal já foi aplicado no WFS via CQL_FILTER (se havia filtro)
+            # Cortes espaciais serão aplicados depois via geoprocessamento
+            if cql_filter:
+                print(f"✅ DEBUG: Filtro temporal aplicado no WFS via CQL_FILTER (fallback)")
             else:
-                print(f"✅ DEBUG: Fallback sem filtro temporal necessário")
-                return layer
+                print(f"✅ DEBUG: Download completo (sem filtro temporal) - fallback")
+            
+            return layer
             
         except Exception as e:
             print(f"❌ ERROR download_wfs_layer_fallback: {str(e)}")
@@ -2125,7 +2075,10 @@ class DesagregaBiomasBRDialog(QDialog):
             return None
 
     def extract_typename_from_url(self, url, layer_name):
-        """Extrai o typename correto baseado na URL e nome da layer"""
+        """Extrai o typename correto baseado na URL e nome da layer
+        
+        NOTA: Para Amazônia, usa typenames da Amazônia Legal (WFS mais estável)
+        """
         try:
             # Mapeamento de typenames corretos por bioma
             typename_mapping = {
@@ -2133,11 +2086,6 @@ class DesagregaBiomasBRDialog(QDialog):
                     'accumulated_deforestation': 'prodes-pantanal-nb:accumulated_deforestation_2000',
                     'yearly_deforestation': 'prodes-pantanal-nb:yearly_deforestation',
                     'deter_alerts': 'deter-cerrado-nb:deter_cerrado'  # DETER Pantanal usa mesmo endpoint do Cerrado
-                },
-                'Amazônia': {
-                    'accumulated_deforestation': 'prodes-amazon-nb:accumulated_deforestation_2007_biome',
-                    'yearly_deforestation': 'prodes-amazon-nb:yearly_deforestation_biome',
-                    'deter_alerts': 'deter-amz:deter_amz'
                 },
                 'Cerrado': {
                     'accumulated_deforestation': 'prodes-cerrado-nb:accumulated_deforestation_2000',
@@ -2174,8 +2122,21 @@ class DesagregaBiomasBRDialog(QDialog):
             else:
                 layer_type = 'yearly_deforestation'
             
+            # CORREÇÃO: Para Amazônia, usar typenames da Amazônia Legal
+            import unicodedata
+            effective_biome = self.selected_biome
+            biome_normalized = unicodedata.normalize('NFC', self.selected_biome) if self.selected_biome else self.selected_biome
+            amazonia_check = unicodedata.normalize('NFC', 'Amazônia')
+            
+            print(f"🔍 DEBUG extract_typename: selected_biome = '{self.selected_biome}'")
+            print(f"🔍 DEBUG extract_typename: biome_normalized == amazonia_check = {biome_normalized == amazonia_check}")
+            
+            if biome_normalized == amazonia_check:
+                effective_biome = 'Amazônia Legal'
+                print(f"🔄 DEBUG extract_typename: Convertendo Amazônia → Amazônia Legal")
+            
             # Busca typename correto
-            biome_mapping = typename_mapping.get(self.selected_biome, {})
+            biome_mapping = typename_mapping.get(effective_biome, {})
             typename = biome_mapping.get(layer_type)
             
             if typename:
@@ -2461,12 +2422,67 @@ class DesagregaBiomasBRDialog(QDialog):
                 self.cut_option != 0
             )
             
-            if not needs_cut:
+            # CORREÇÃO AMAZÔNIA: Se usuário selecionou Amazônia e não pediu corte,
+            # ainda precisa cortar pelo limite do bioma (pois usamos WFS da Amazônia Legal)
+            needs_amazonia_biome_cut = (
+                self.selected_biome == 'Amazônia' and 
+                not needs_cut and
+                hasattr(self, '_needs_amazonia_biome_cut') and 
+                self._needs_amazonia_biome_cut
+            )
+            
+            if not needs_cut and not needs_amazonia_biome_cut:
                 # Sem corte espacial - pula esta etapa
                 self.update_notes(f"🌍 Sem recorte espacial | Usando bioma completo: {self.selected_biome}", "status")
                 print(f"🌍 DEBUG: Sem corte espacial - pulando etapa")
                 
                 # Agenda próxima etapa diretamente
+                QTimer.singleShot(1000, self.real_step_merge_layers)
+                return
+            
+            # CORREÇÃO AMAZÔNIA: Aplica corte pelo bioma quando necessário
+            if needs_amazonia_biome_cut and not needs_cut:
+                print(f"🌳 DEBUG: Aplicando corte automático pelo bioma Amazônia")
+                self.update_notes(f"🌳 Aplicando recorte pelo bioma Amazônia | Dados vieram da Amazônia Legal", "status")
+                
+                # Obtém layer do bioma Amazônia do shapefile IBGE
+                cut_layer = self.get_amazonia_biome_cut_layer()
+                
+                if not cut_layer:
+                    print(f"⚠️ DEBUG: Não foi possível obter limite do bioma Amazônia - usando dados completos")
+                    self.update_notes(f"⚠️ Limite do bioma não disponível | Usando dados da Amazônia Legal", "warning")
+                    QTimer.singleShot(1000, self.real_step_merge_layers)
+                    return
+                
+                print(f"🔄 DEBUG: Aplicando corte pelo bioma Amazônia com {cut_layer.featureCount()} feições")
+                
+                # Fix geometries na layer de corte
+                fixed_cut_layer = self.auto_fix_geometries(cut_layer, "bioma_amazonia")
+                if not fixed_cut_layer:
+                    fixed_cut_layer = cut_layer
+                
+                # Aplica corte em cada layer processada
+                clipped_layers = []
+                
+                for i, layer in enumerate(self.processing_layers):
+                    print(f"🌳 DEBUG: Cortando layer {i+1}/{len(self.processing_layers)} pelo bioma Amazônia...")
+                    
+                    fixed_data_layer = self.auto_fix_geometries(layer, f"dados_{i}")
+                    if not fixed_data_layer:
+                        fixed_data_layer = layer
+                    
+                    clipped_layer = self.clip_layer(fixed_data_layer, fixed_cut_layer)
+                    
+                    if clipped_layer:
+                        clipped_layers.append(clipped_layer)
+                        print(f"✅ DEBUG: Layer cortada pelo bioma: {clipped_layer.featureCount()} feições")
+                    else:
+                        print(f"❌ DEBUG: Falha ao cortar layer pelo bioma")
+                
+                if clipped_layers:
+                    self.processing_layers = clipped_layers
+                
+                # Agenda próxima etapa
                 QTimer.singleShot(1000, self.real_step_merge_layers)
                 return
             
@@ -3373,7 +3389,9 @@ class DesagregaBiomasBRDialog(QDialog):
                 'layer_names': []
             }
             
+            print(f"🔍 DEBUG build_urls_and_filters: selected_biome = '{self.selected_biome}'")
             urls = self.get_dynamic_prodes_urls(self.selected_biome)
+            print(f"🔍 DEBUG build_urls_and_filters: URLs retornadas = {urls}")
             
             if self.data_type == "incremental":
                 # Só yearly_deforestation com filtro
@@ -7671,6 +7689,63 @@ class DesagregaBiomasBRDialog(QDialog):
         
         return filtered_layer
 
+    def get_amazonia_biome_cut_layer(self):
+        """Obtém a camada de corte do bioma Amazônia para recortar dados da Amazônia Legal
+        
+        Esta função é usada quando o usuário seleciona 'Amazônia' mas os dados vêm
+        do WFS da Amazônia Legal (que é mais estável). O corte garante que apenas
+        os polígonos dentro do bioma Amazônia sejam retornados.
+        """
+        try:
+            print(f"🌳 DEBUG: Obtendo limite do bioma Amazônia para corte...")
+            
+            # Verifica se o shapefile IBGE está disponível
+            if not hasattr(self, 'ibge_layer') or not self.ibge_layer:
+                # Tenta carregar o shapefile IBGE
+                self.load_ibge_shapefile()
+            
+            if not self.ibge_layer:
+                print(f"❌ DEBUG: Shapefile IBGE não disponível")
+                return None
+            
+            # Filtra pelo bioma Amazônia
+            expression = '"bioma" = \'Amazônia\''
+            request = QgsFeatureRequest().setFilterExpression(expression)
+            
+            # Cria nova camada com as feições do bioma Amazônia
+            filtered_layer = QgsVectorLayer(f"Polygon?crs={self.ibge_layer.crs().authid()}", "Bioma_Amazonia", "memory")
+            provider = filtered_layer.dataProvider()
+            provider.addAttributes(self.ibge_layer.fields())
+            filtered_layer.updateFields()
+            
+            # Adiciona feições filtradas
+            features = []
+            for feature in self.ibge_layer.getFeatures(request):
+                features.append(feature)
+            
+            if not features:
+                print(f"❌ DEBUG: Nenhuma feição encontrada para bioma Amazônia")
+                return None
+            
+            provider.addFeatures(features)
+            print(f"✅ DEBUG: {len(features)} feições do bioma Amazônia encontradas")
+            
+            # Dissolve para obter um único polígono do bioma
+            dissolved_layer = self.dissolve_layer(filtered_layer, 'bioma')
+            
+            if dissolved_layer and dissolved_layer.isValid():
+                print(f"✅ DEBUG: Layer do bioma Amazônia dissolvida: {dissolved_layer.featureCount()} feições")
+                return dissolved_layer
+            else:
+                print(f"⚠️ DEBUG: Dissolve falhou, usando layer não dissolvida")
+                return filtered_layer
+                
+        except Exception as e:
+            print(f"❌ ERROR get_amazonia_biome_cut_layer: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return None
+
     def dissolve_layer(self, layer, field):
         """Dissolve uma camada por um campo específico"""
         try:
@@ -8037,9 +8112,24 @@ class DesagregaBiomasBRDialog(QDialog):
         
         self.queimadas_data_type_button_group = QButtonGroup()
         
+        # Container para o radio button Anual e checkbox Dissolver
+        anual_container = QWidget()
+        anual_layout = QHBoxLayout(anual_container)
+        anual_layout.setContentsMargins(0, 0, 0, 0)
+        
         self.radio_queimadas_anual = QRadioButton("Anual (todos os meses do ano unidos)")
         self.radio_queimadas_anual.setToolTip("Baixa todos os meses do ano selecionado e os une em um único arquivo")
         self.radio_queimadas_anual.setChecked(True)  # Padrão anual
+        
+        # Checkbox para dissolver dados (apenas para modo anual)
+        self.checkbox_dissolve_queimadas = QCheckBox("Dissolver dados")
+        self.checkbox_dissolve_queimadas.setToolTip("Dissolve áreas queimadas adjacentes em uma única feição")
+        self.checkbox_dissolve_queimadas.setChecked(True)  # Marcado por padrão para manter comportamento atual
+        self.checkbox_dissolve_queimadas.stateChanged.connect(self.on_dissolve_queimadas_changed)
+        
+        anual_layout.addWidget(self.radio_queimadas_anual)
+        anual_layout.addWidget(self.checkbox_dissolve_queimadas)
+        anual_layout.addStretch()
         
         self.radio_queimadas_mensal = QRadioButton("Mensal (dados originais)")
         self.radio_queimadas_mensal.setToolTip("Baixa arquivos mensais individuais para o período selecionado")
@@ -8048,7 +8138,7 @@ class DesagregaBiomasBRDialog(QDialog):
         self.queimadas_data_type_button_group.addButton(self.radio_queimadas_mensal, 1)
         self.queimadas_data_type_button_group.buttonClicked.connect(self.on_queimadas_data_type_changed)
         
-        data_type_layout.addWidget(self.radio_queimadas_anual)
+        data_type_layout.addWidget(anual_container)
         data_type_layout.addWidget(self.radio_queimadas_mensal)
         data_type_group.setLayout(data_type_layout)
         self.content_layout.addWidget(data_type_group)
@@ -8091,6 +8181,7 @@ class DesagregaBiomasBRDialog(QDialog):
         
         # Inicializa valores padrão
         self.queimadas_data_type = "anual"
+        self.queimadas_dissolve = True  # Por padrão, dissolve está ativado
         self.queimadas_year = None
         self.queimadas_month = None  # SIMPLIFICADO - apenas 1 mês
         
@@ -8146,14 +8237,22 @@ class DesagregaBiomasBRDialog(QDialog):
         self.update_queimadas_notes()
         self.update_navigation_buttons()
     
+    def on_dissolve_queimadas_changed(self, state):
+        """Callback para mudança da checkbox de dissolve"""
+        self.queimadas_dissolve = (state == 2)  # 2 = Qt.Checked
+        print(f"🔥 DEBUG: Dissolve queimadas = {self.queimadas_dissolve}")
+        self.update_queimadas_notes()
+    
     def update_queimadas_interface(self):
         """Atualiza interface baseada no tipo de dados selecionado"""
         if self.queimadas_data_type == "anual":
             self.queimadas_year_widget.setVisible(True)
             self.queimadas_month_widget.setVisible(False)
+            self.checkbox_dissolve_queimadas.setVisible(True)  # Mostra checkbox apenas para anual
         else:  # mensal
             self.queimadas_year_widget.setVisible(False)
             self.queimadas_month_widget.setVisible(True)
+            self.checkbox_dissolve_queimadas.setVisible(False)  # Esconde checkbox para mensal
     
     def on_queimadas_year_changed(self, year_text):
         """Callback para mudança do ano (modo anual)"""
@@ -8193,6 +8292,11 @@ class DesagregaBiomasBRDialog(QDialog):
             if hasattr(self, 'queimadas_data_type') and self.queimadas_data_type:
                 type_text = "Anual" if self.queimadas_data_type == "anual" else "Mensal"
                 notes_parts.append(f"📈 Tipo: {type_text}")
+                
+                # Adiciona informação sobre dissolve apenas para modo anual
+                if self.queimadas_data_type == "anual" and hasattr(self, 'queimadas_dissolve'):
+                    dissolve_text = "Sim" if self.queimadas_dissolve else "Não"
+                    notes_parts.append(f"🔄 Dissolver: {dissolve_text}")
             
             # Informações de período
             if self.queimadas_data_type == "anual" and hasattr(self, 'queimadas_year') and self.queimadas_year:
@@ -8743,12 +8847,22 @@ class DesagregaBiomasBRDialog(QDialog):
             
             self.processing_layers = cut_layers
             
-            # OTIMIZAÇÃO: Aplica dissolve APÓS o corte (só para modo anual)
+            # OTIMIZAÇÃO: Aplica dissolve APÓS o corte (só para modo anual e se checkbox marcada)
             # Agora dissolve apenas os dados do bioma, não do Brasil todo!
-            if self.queimadas_data_type == "anual" and len(self.processing_layers) == 1:
+            should_dissolve = (
+                self.queimadas_data_type == "anual" and 
+                hasattr(self, 'queimadas_dissolve') and 
+                self.queimadas_dissolve and
+                len(self.processing_layers) == 1
+            )
+            
+            if should_dissolve:
+                print(f"🔥 DEBUG: Dissolve será aplicado (checkbox marcada)")
                 QTimer.singleShot(1000, self.queimadas_step_dissolve_after_cut)
             else:
-                # Modo mensal ou sem necessidade de dissolve - continua
+                # Modo mensal ou checkbox desmarcada - continua sem dissolve
+                if self.queimadas_data_type == "anual" and not self.queimadas_dissolve:
+                    print(f"🔥 DEBUG: Dissolve NÃO será aplicado (checkbox desmarcada)")
                 QTimer.singleShot(1000, self.queimadas_check_additional_cut)
             
         except Exception as e:
@@ -8834,6 +8948,7 @@ class DesagregaBiomasBRDialog(QDialog):
         try:
             self.status_label.setText("🔄 Dissolvendo áreas queimadas adjacentes (pós-corte)...")
             print(f"🔥 DEBUG: Aplicando dissolve otimizado após corte por bioma...")
+            print(f"🔥 DEBUG: Dissolve ativado pela checkbox = {self.queimadas_dissolve}")
             
             # Pega a layer já cortada por bioma
             cut_layer = self.processing_layers[0]
