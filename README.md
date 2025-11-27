@@ -2,7 +2,7 @@
 
 ## 📋 Descrição
 
-Plugin para QGIS que oferece um **assistente guiado** para seleção e desagregação de dados ambientais brasileiros por região ou recorte espacial. O plugin facilita o acesso e processamento de dados oficiais dos principais programas de monitoramento ambiental do Brasil.
+Elaborado no âmbito do Programa AIM4Forests, pela FAO e INPE, o Plugin que oferece um assistente guiado para seleção e desagregação de dados ambientais brasileiros por região ou recorte espacial. Facilita o acesso e processamento de dados oficiais dos principais sistemas de monitoramento ambiental do Programa BiomasBR: PRODES (desmatamento), DETER (alertas), TERRACLASS (uso da terra) e ÁREA QUEIMADA (queimadas). Inclui opções avançadas de corte espacial e múltiplos formatos de saída.
 
 ## 🎯 Funcionalidades Principais
 
