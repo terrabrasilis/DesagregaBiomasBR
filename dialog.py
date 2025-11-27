@@ -767,6 +767,51 @@ class DesagregaBiomasBRDialog(QDialog):
         # Inicializa mensagem inicial mostrando que está preparando
         self.update_notes("🚀 DesagregaBiomasBR carregando... Verificando atualizações e preparando dados dos sistemas de monitoramento ambiental.", "loading")
 
+    def reset_to_initial_state(self):
+        """Reseta o plugin para o estado inicial - usado para Novo Processamento"""
+        print(f"🔄 DEBUG: Resetando plugin para estado inicial")
+        
+        # Reseta todas as variáveis
+        self.reset_all_variables()
+        
+        # Restaura visibilidade dos botões
+        self.btn_cancel.setVisible(True)
+        self.btn_back.setVisible(True)
+        self.btn_back.setEnabled(False)  # Desabilitado no passo 1
+        self.btn_next.setVisible(True)
+        self.btn_next.setEnabled(True)
+        
+        # Reseta texto do botão processar
+        self.btn_process.setText("🚀 Iniciar Processamento")
+        self.btn_process.setEnabled(False)
+        self.btn_process.setVisible(False)
+        
+        # Volta para o passo 1
+        self.current_step = 1
+        
+        # Limpa campos de entrada
+        if hasattr(self, 'dest_path_edit'):
+            self.dest_path_edit.clear()
+        
+        # Reseta seleções de radio buttons
+        if hasattr(self, 'radio_shapefile'):
+            self.radio_shapefile.setChecked(True)
+        if hasattr(self, 'checkbox_add_to_map'):
+            self.checkbox_add_to_map.setChecked(True)
+        if hasattr(self, 'checkbox_generate_metadata'):
+            self.checkbox_generate_metadata.setChecked(True)
+        
+        # Limpa notas
+        self.update_notes("💡 Selecione um tema para começar", "config")
+        
+        # Atualiza interface completamente
+        self.update_interface()
+        
+        # Ajusta tamanho da janela
+        self.adjustSize()
+        
+        print(f"✅ DEBUG: Reset completo realizado - voltou ao passo 1")
+    
     def reset_all_variables(self):
         """Reset COMPLETO de todas as variáveis para garantir estado limpo"""
         print("🧹 DEBUG: Executando reset_all_variables - zerando todas as variáveis")
@@ -1440,6 +1485,13 @@ class DesagregaBiomasBRDialog(QDialog):
 
     def start_processing(self):
         """Inicia o processamento dos dados (PRODES ou DETER)"""
+        
+        # Verifica se é um "Novo Processamento" (reset completo)
+        if self.btn_process.text() == "🆕 Novo Processamento":
+            print(f"🔄 DEBUG: Iniciando novo processamento - resetando tudo")
+            self.reset_to_initial_state()
+            return
+        
         print(f"🚀 DEBUG: Iniciando processamento {self.selected_theme}")
         print(f"🔧 DEBUG: Tema={self.selected_theme}, Bioma={self.selected_biome}")
         
@@ -9315,15 +9367,26 @@ class DesagregaBiomasBRDialog(QDialog):
         self.btn_abort.setVisible(False)
         
         if success:
+            # Processamento bem-sucedido
             self.btn_process.setEnabled(True)
-            self.btn_process.setText("🔄 Processar Novamente")
+            self.btn_process.setText("🆕 Novo Processamento")
+            
+            # Esconde botões Cancelar e Voltar
+            self.btn_cancel.setVisible(False)
+            self.btn_back.setVisible(False)
+            
+            # Mantém apenas o botão Novo Processamento visível
+            self.btn_next.setEnabled(False)
+            self.btn_next.setVisible(False)
+            self.btn_finish.setEnabled(True)
         else:
+            # Processamento falhou ou foi abortado
             self.btn_process.setEnabled(True)
             self.btn_process.setText("🚀 Iniciar Processamento")
-        
-        # Reabilita outros botões
-        self.btn_back.setEnabled(True)
-        self.btn_next.setEnabled(True)
-        self.btn_finish.setEnabled(True)
+            
+            # Reabilita botões normalmente
+            self.btn_back.setEnabled(True)
+            self.btn_next.setEnabled(True)
+            self.btn_finish.setEnabled(True)
 
 
