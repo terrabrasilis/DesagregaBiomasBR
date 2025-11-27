@@ -1,0 +1,1381 @@
+
+RELATÓRIO TÉCNICO: 
+PROCEDIMENTOS OPERACIONAIS PADRÃO (POPs) PARA DESAGREGAÇÃO DE DADOS BiomasBR AO NÍVEL SUBNACIONAL 
+
+Realização
+Instituto Nacional de Pesquisas Espaciais (INPE)
+Organização das Nações Unidas para a Alimentação e a Agricultura (FAO)
+Programa das Nações Unidas para o Desenvolvimento (PNUD)
+
+Supervisão
+Claudio Almeida (INPE)
+
+Coordenação
+Flora Martins (FAO)
+
+Elaboração
+Isadora Gerheim (FAO)
+
+Revisão
+Bojan Philip Auhagen (PNUD)
+Cassiano Gustavo Messias (INPE)
+Luciana Soler (INPE)
+Marcos Adami (INPE)
+Silvana Amaral (INPE)
+
+Versão 1
+2025
+Sumário
+
+Acrônimos	5
+Apresentação	6
+1	Dados Auxiliares	9
+POP 1 - Descrição, Aquisição e Processamento dos Dados Auxiliares	10
+Objetivo	10
+Recortes Disponibilizados	10
+Produtos	10
+Descrição e Aquisição	10
+Estados	11
+Municípios	14
+Unidades de Conservação	16
+Terras Indígenas	17
+Limites da Amazônia Legal e dos Biomas Brasileiros	19
+Processamento	22
+Seleção dos Dados Auxiliares – definição da região de interesse subnacional	22
+Padronização de arquivos vetoriais de outras fontes	23
+2	Prodes	23
+2.1 - Bioma Amazônia	24
+POP 2.1 - Descrição, aquisição e processamento dos dados do sistema Prodes	24
+Objetivo	25
+Produtos	25
+Descrição e Aquisição	25
+Incremento Anual de Desmatamento / Supressão	26
+Incremento Anual de Desmatamento (polígonos entre 1 e 6,25 ha)	30
+Dados Completos em Formato Matricial	33
+Dados Completos em Formato Vetorial	36
+Resíduo Anual na Supressão da Vegetação Nativa	40
+Processamento	42
+Desagregação do arquivo matricial a nível subnacional	43
+Desagregação dos arquivos vetoriais ao nível subnacional	44
+Seleção por ano-Prodes	45
+Seleção por tipo de desmatamento	47
+Seleção por ano-Prodes & tipo de desmatamento	51
+Cálculo da área	53
+Limpeza, Padronização e Exportação dos arquivos vetoriais	56
+2.2 - Amazônia Legal e Biomas Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal	60
+POP 2.2 - Descrição, aquisição e processamento dos dados do sistema Prodes	60
+Objetivo	60
+Produtos	60
+Descrição e Aquisição	61
+Incremento Anual de Desmatamento / Supressão	61
+Incremento Parcial de Desmatamento em Regiões Prioritárias	67
+Dados Completos em Formato Matricial	72
+Dados Completos em Formato Vetorial	78
+Resíduo Anual na Supressão da Vegetação Nativa	83
+Desmatamento no Brasil em Formato Matricial	86
+Processamento	88
+Desagregação dos arquivos matriciais a nível subnacional	88
+Desagregação dos arquivos vetoriais a nível subnacional	89
+Seleção por ano-Prodes	89
+Seleção por tipo de desmatamento	89
+Seleção por ano-Prodes & tipo de desmatamento	89
+Cálculo da área	89
+Limpeza, Padronização e Exportação dos Arquivos Vetoriais	89
+3	Deter	90
+3.1 - Amazônia Legal	91
+POP 3.1 - Descrição, aquisição e processamento dos dados do sistema Deter para a Amazônia Legal	91
+Objetivo	91
+Produtos	92
+Descrições e Aquisições	92
+Avisos de supressão e degradação em áreas de Não Floresta - Amazônia Legal	93
+Avisos de supressão e degradação em áreas de Floresta - Amazônia Legal	96
+Processamento	101
+Desagregação dos arquivos vetoriais a nível subnacional	101
+Seleção dos avisos por ano-Prodes	101
+Seleção dos avisos por tipo	104
+Seleção dos avisos por ano-Prodes e por tipo de degradação	106
+Cálculo da área	109
+Limpeza, Padronização e Exportação dos arquivos	109
+3.2 - Biomas Cerrado e Pantanal	109
+POP 3.2 - Descrição, aquisição e processamento dos dados do sistema Deter para os biomas Cerrado e Pantanal	109
+Objetivo	109
+Produtos	110
+Descrições e Aquisições	110
+Avisos de desmatamento - Cerrado	110
+Avisos de supressão e degradação vegetal - Pantanal	114
+Processamento	117
+Desagregação dos arquivos vetoriais a nível subnacional	117
+Seleção dos avisos por ano-Prodes	117
+Seleção dos avisos por tipo	117
+Seleção dos avisos por ano-Prodes e por tipo de degradação	117
+Cálculo da área	117
+Limpeza, Padronização e Exportação dos arquivos	118
+4	TerraClass	118
+POP 4 - Descrição, aquisição e processamento dos dados do sistema TerraClass	119
+Objetivo	119
+Recortes Regionais Disponibilizados	119
+Produtos	119
+Descrições	120
+TerraClass Amazônia	120
+TerraClass Cerrado	122
+Aquisição	123
+TerraClass Amazônia e TerraClass Cerrado	123
+Processamento	125
+Desagregação dos arquivos matriciais a nível subnacional	125
+Cálculo da área	126
+Limpeza, Padronização e Exportação dos arquivos vetoriais	126
+5	Operação Extra	127
+POP 5 – Correção de geometria inválidas	127
+Correção de geometria inválida	127
+6	Aplicação dos POPs no contexto REDD+ segundo abordagem do FREL nacional	129
+POP 6 - Obtenção de dados de atividade e estoque de carbono	130
+Objetivo	130
+Produtos	130
+Descrição e Aquisição	130
+Dados Auxiliares	130
+BiomasBR	133
+Processamento	134
+Filtragem e Desagregação dos Dados	134
+Cálculo do estoque de carbono	137
+Cálculo de área dos polígonos	138
+Limpeza, Padronização e Exportação do Produto Final	139
+
+
+Acrônimos
+
+ART	Arquitetura para Transações REDD+ (do inglês, Architecture for REDD+ Transactions)
+ROI	Região de interesse (do inglês, Region of Interest)
+BiomasBR	Programa de Monitoramento dos Biomas Brasileiros
+Deter	Sistema de Detecção de Desmatamento em Tempo Real
+GHG	Gases de Efeito Estufa (do inglês, Greenhouse Gas)
+POP	Procedimento Operacional Padrão
+Prodes	Monitoramento Anual da Supressão da Vegetação Nativa
+WFS	Web Feature Service (Serviço de Feições Web)
+	
+
+Apresentação
+
+Este relatório técnico tem como objetivo apresentar os Procedimentos Operacionais Padrão (POPs) para desagregação dos dados nacionais do Programa de Monitoramento dos Biomas Brasileiros (BiomasBR) para o nível subnacional, facilitando o acesso dos usuários, especialmente Estados, aos dados governamentais de desmatamento, supressão da vegetação nativa, degradação florestal e uso e cobertura da terra. Os POPs apresentados neste relatório foram elaborados para facilitar o processamento dos produtos provenientes do sistema BiomasBR, sendo realizado no âmbito do apoio da Organização das Nações Unidas para a Alimentação e a Agricultura (FAO), via Programa AIM4Forests  de assistência técnica para fortalecimento dos sistemas nacionais de monitoramento florestal, e do apoio do Programa das Nações Unidas para o Desenvolvimento (PNUD) para assistência técnica aos Estados brasileiros no desenvolvimento de seus programas REDD jurisdicionais.
+O programa BiomasBR, uma iniciativa do Ministério da Ciência, Tecnologia e Inovação do Brasil, busca a consolidação do desmatamento anual, expansão do sistema de avisos de desmatamento e/ou supressão de vegetação nativa, bem como a capacitação de pessoal para uso de técnicas de sensoriamento remoto. Por meio de sistemas de análise de imagens de sensoriamento remoto, que operam em diversas resoluções espaciais e temporais e se fundamentam em metodologias ajustadas às particularidades de cada bioma, o BiomasBR é responsável pela manutenção e pelo contínuo aprimoramento do monitoramento da supressão da vegetação nativa e da dinâmica da cobertura terrestre nos biomas brasileiros.
+O monitoramento do desmatamento e da degradação florestal pelo BiomasBR é feito em diferentes frentes, com objetivos complementares. O sistema Prodes (Monitoramento Anual da Supressão da Vegetação Nativa) realiza a contabilização anual de áreas efetivamente convertidas (i.e. desmatamento por corte raso e supressão da vegetação nativa não florestal), enquanto o sistema Deter (Sistema de Detecção de Desmatamento em Tempo Real) fornece alertas diários de indícios de desmatamento e/ou degradação, com menor precisão, para subsidiar o planejamento de ações de fiscalização, controle e autuação por órgãos como IBAMA (Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis), ICMBio (Instituto Chico Mendes de Conservação da Biodiversidade), Ministério do Meio Ambiente (MMA) e Ministério Público Federal (MPF). Os dados do Prodes são disponibilizados anualmente, para todos os biomas brasileiros, enquanto os alertas do Deter são gerados diariamente e disponibilizados semanalmente, para a Amazônia Legal, Cerrado e Pantanal. Os produtos destes dois sistemas são disponibilizados no portal TerraBrasilis , uma plataforma web desenvolvida para acesso, consulta, análise e disseminação desses dados geográficos. O portal TerraBrasilis pode ser acessado pelo link: <https://terrabrasilis.dpi.inpe.br/>. 
+O sistema TerraClass, fruto da parceria entre o Instituto Nacional de Pesquisas Espaciais (INPE) e a Empresa Brasileira de Pesquisa Agropecuária (Embrapa), qualifica as áreas desmatadas mapeadas pelo Prodes na Amazônia Legal e no Cerrado, produzindo mapas de uso e cobertura da terra para determinados anos. Os dados TerraClass são disponibilizados via plataforma dedicada, acessível em <https://www.terraclass.gov.br/>. 
+Para maior transparência na reprodução das informações, determinados "Dados Auxiliares" produzidos por outras instituições, mas pertinentes à produção dos dados ou às análises apresentadas no TerraBrasilis, são igualmente disponibilizados na plataforma TerraBrasilis. São eles: limites dos estados, municípios, Unidades de Conservação e Terras Indígenas. O diagrama abaixo (Figura 1) apresenta os dados disponibilizados pelo BiomasBR e seus respectivos biomas.
+
+
+Incremento Anual de Desmatamento 
+(polígonos acima de 1 ha): Caatinga | Cerrado | Mata Atlântica | Pampa | Pantanal | Áreas Não Florestais da Amazônia*
+(polígonos acima de 6,25ha): Áreas Florestais da Amazônia Legal e da Amazônia*
+
+Incremento Anual de Desmatamento (polígonos entre 1 e 6,25 ha)
+Áreas Florestais da Amazônia*
+
+Incremento Parcial de Desmatamento em Regiões Prioritárias
+Amazônia Legal
+
+Dados Completos em Formato Matricial
+Amazônia* | Amazônia Legal | Caatinga | Cerrado | Mata Atlântica | Pampa | Pantanal
+
+Dados Completos em Formato Vetorial
+Amazônia* | Amazônia Legal | Caatinga | Cerrado | Mata Atlântica | Pampa | Pantanal
+
+Resíduo Anual na Supressão da Vegetação Nativa
+Amazônia* | Amazônia Legal | Caatinga | Cerrado | Mata Atlântica | Pampa | Pantanal
+
+
+
+Avisos de supressão e degradação em áreas de Não Floresta
+(Amazônia Legal)
+
+Avisos de supressão e degradação em áreas de Floresta
+(Amazônia Legal)
+
+Avisos de supressão vegetal – Cerrado
+
+Avisos de supressão e degradação vegetal - Pantanal
+
+
+
+Mapa das classes de uso e cobertura da terra – Amazônia*
+Mapa das classes de uso e cobertura da terra – Cerrado
+
+
+Figura 1. Diagrama apresentando os dados disponibilizados pelos produtos Prodes, Deter e TerraClass.
+* Bioma Amazônia
+
+Os POPs consistem em uma série de etapas e instruções para a desagregação dos dados de forma estruturada, consistente e replicável. Eles foram descritos a partir das ferramentas e funcionalidades do Quantum GIS (QGIS, versão 3.16 ou superior), um software gratuito e de código aberto. Porém, as mesmas operações podem ser replicadas em outros softwares com pequenos ajustes nos comandos e na interface.
+
+NOTA IMPORTANTE: Foi desenvolvido o plugin DesagregaBiomasBR para QGIS que automatiza todos os procedimentos descritos neste documento, permitindo download direto via WFS (Web Feature Service), processamento automatizado dos dados, aplicação de recortes espaciais e temporais, merge de múltiplas camadas, dissolução de polígonos, e exportação em diversos formatos (Shapefile, GeoPackage, KML, GeoJSON). O plugin utiliza cache inteligente para otimizar downloads, armazenando configurações dinâmicas e shapefiles IBGE localmente. O plugin está disponível no repositório oficial do QGIS e no GitHub (https://github.com/geodenilson/DesagregaBiomasBR).
+
+Foi desenvolvida uma seção para cada sistema: 1) Dados Auxiliares; 2) Prodes; 3) Deter; 4) TerraClass; e 5) Área Queimada (disponível apenas via plugin); e para cada sistema foi elaborado um POP com a Descrição, Aquisição e Processamento dos Dados. 
+Esses POPs demonstram as operações de desagregação dos dados do BiomasBR e podem ser aplicados a vários contextos, inclusive para apoiar iniciativas REDD+. No âmbito da Convenção-Quadro das Nações Unidas sobre Mudança do Clima (UNFCCC), o Brasil submeteu o Nível de Referência de Emissões Florestais (FREL) nacional, para possibilitar pagamentos por resultados vinculados à redução de emissões por desmatamento, degradação, conservação, manejo sustentável das florestas e aumento de estoques de carbono. Alguns procedimentos previstos no FREL exigem a desagregação dos dados do BiomasBR e posterior contabilização do estoque de carbono. Para tornar esse fluxo mais acessível, foi desenvolvido o POP 7 – Obtenção de dados de atividade e estoque de carbono, que conduz o usuário desde a coleta de bases utilizadas no FREL, passando pela desagregação dos dados do BiomasBR, até a quantificação dos estoques de carbono nas áreas de desmatamento e degradação florestal.
+
+
+1	Dados Auxiliares
+
+Para desagregar os dados do BiomasBR ao nível subnacional, é necessário utilizar os recortes jurisdicionais correspondentes. O BiomasBR disponibiliza conjuntos de informações geoespaciais, denominados “Dados Auxiliares”, que incluem os limites territoriais de Estados, Municípios, Unidades de Conservação, Terras Indígenas, Amazônia Legal e Biomas Brasileiros. Esses dados são fornecidos pelo Instituto Nacional de Pesquisas Espaciais (INPE) e para os biomas brasileiros, os limites estão em conformidade com a atualização do IBGE de 30/10/2019. Para auxiliar na implementação dos POPs no contexto REDD+, o INPE incluiu nos Dados Auxiliares o Mapa de Vegetação Pretérita, Estimativa de Biomassa da Amazônia (EBA) e os arquivos vetoriais das Terras Manejadas.
+
+POP 1 - Descrição, Aquisição e Processamento dos Dados Auxiliares
+
+Procedimento Operacional Padrão 1
+Dados Auxiliares
+Objetivo	Fornecer a descrição e os procedimentos para aquisição dos Dados Auxiliares que são entendidos como a região de interesse (ROI) do usuário para uso nas etapas posteriores de recorte dos dados BiomasBR.
+
+Recortes Disponibilizados	Os Dados Auxiliares são estruturados em recortes territoriais, como a Amazônia Legal e cada um dos biomas brasileiros separadamente (Amazônia, Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal). Para cada recorte territorial, há um conjunto de dados contendo os limites geográficos dos Estados, Municípios, Unidades de Conservação e Terras Indígenas dentro do recorte territorial correspondente. O usuário também pode optar por utilizar arquivo próprio contendo a delimitação da sua região de interesse (ROI).
+
+Produtos	Ao executar esse POP, o usuário adquirirá o seguinte produto:
+
+●	Arquivos vetoriais padronizados com os limites geográficos dos Estados, Municípios, Unidades de Conservação, Terras Indígenas, Amazônia Legal ou Biomas Brasileiros de interesse.
+
+Descrição e Aquisição
+Estados 	
+Descrição
+
+●	Dado de terceiro para uso auxiliar, composto pelos limites dos estados, provenientes do shapefile "lml_unidade_federacao_a" (IBGE - BC250 - Limites e Localidades - 1:250.000 - 2021) , recortados pelos novos limites dos biomas do Brasil. A categoria Limites e Localidades da Base Cartográfica Contínua do Brasil na escala 1:250 000 (BC250) é um conjunto de dados geoespaciais de referência, estruturados em bases de dados digitais, permitindo uma visão integrada do território nacional nesta escala. Foi gerada a partir da integração das folhas do mapeamento sistemático brasileiro, na escala de 1:250 000, conforme a Especificação Técnica para a Estruturação de Dados Geoespaciais Vetoriais, versão 3.0 (ET-EDGV 3.0). A categoria está dividida em classes de elementos, correspondentes aos elementos geográficos que representam o território nacional nessa escala. Cada classe de elementos possui atributos geométricos e semânticos associados a banco de dados, permitindo consultas espaciais e semânticas. A categoria está inserida na Infraestrutura Nacional de Dados Espaciais do Brasil (INDE). Esse dado possui os campos: 
+○	id: identificador único para cada estado; 
+○	nome: nome do estado;
+○	sigla: sigla do estado;
+○	geocodigo:
+
+É disponibilizado para Amazônia Legal e para os biomas Amazônia, Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal. O Sistema de Coordenadas é EPSG:4674.
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre na lista de opções o recorte territorial de interesse (Amazônia Legal, Amazônia, Cerrado, Caatinga, Mata Atlântica, Pampa ou Pantanal). Dentro da opção Auxiliares, encontre a opção com os Estados presentes no recorte selecionado:
+
+NOTA: O plugin DesagregaBiomasBR permite o download automático destes dados via WFS diretamente do servidor TerraBrasilis, sem necessidade de download manual.
+ 
+Efetuar a aquisição clicando na opção Download.
+	
+Municípios	
+Descrição
+
+●	Dado de terceiro para uso auxiliar, composto pelos limites dos municípios, provenientes do shapefile "lml_municipio_a" (IBGE - BC250 - Limites e Localidades - 1:250.000 - 2021), recortados pelos limites dos biomas. O shapefile original de municípios pode ser acessado em: <https://www.ibge.gov.br/apps/basescartograficas/#/home>. Os metadados originais podem ser acessados em: https://metadadosgeo.ibge.gov.br/geonetwork_ibge/srv/por/catalog.search#/metadata/9377677f-97fa-4763-ab4a-40dc4f6d4a7d/formatters/xsl-view?root=div&view=advanced. A categoria Limites e Localidades da Base Cartográfica Contínua do Brasil na escala 1:250 000 (BC250) é um conjunto de dados geoespaciais de referência, estruturados em bases de dados digitais, permitindo uma visão integrada do território nacional nesta escala. Foi gerada a partir da integração das folhas do mapeamento sistemático brasileiro, na escala de 1:250 000, conforme a Especificação Técnica para a Estruturação de Dados Geoespaciais Vetoriais, versão 3.0 (ET-EDGV 3.0). A categoria está dividida em classes de elementos, correspondentes aos elementos geográficos que representam o território nacional nessa escala. Cada classe de elementos possui atributos geométricos e semânticos associados a banco de dados, permitindo consultas espaciais e semânticas. A categoria está inserida na Infraestrutura Nacional de Dados Espaciais do Brasil (INDE).
+
+É disponibilizado para Amazônia Legal e dos biomas Amazônia, Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal.
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre na lista de opções o recorte territorial de interesse (Amazônia Legal, Amazônia, Cerrado, Caatinga, Mata Atlântica, Pampa ou Pantanal). Dentro da opção Auxiliares, encontre a opção com os Municípios presentes no recorte selecionado:
+
+ 
+Efetuar a aquisição clicando na opção Download.
+	
+Unidades de Conservação	Descrição
+
+●	Dado de terceiro para uso auxiliar, composto pelos limites das Unidades de Conservação, provenientes do tema "Unidades de Conservação (todas)" (MMA), recortados pelos novos limites dos biomas do Brasil. O shapefile original das unidades de conservação pode ser acessado em: http://mapas.mma.gov.br/i3geo/datadownload.htm e os metadados originais podem ser acessados em: http://mapas.mma.gov.br/geonetwork/srv/br/metadata.show?id=1250. 
+
+Disponibilizado para Amazônia Legal e dos biomas Amazônia, Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal
+
+Aquisição via Portal TerraBrasilis
+
+●	Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre na lista de opções o recorte territorial de interesse (Amazônia Legal, Amazônia, Cerrado, Caatinga, Mata Atlântica, Pampa ou Pantanal). Dentro da opção Auxiliares, encontre a opção com as Unidades de Conservação presentes no recorte selecionado:
+
+ 
+Efetuar a aquisição clicando na opção Download.
+	
+Terras Indígenas	
+Descrição
+
+●	Polígonos e Pontos das Terras Indígenas brasileiras separadas por bioma. Dado de terceiro para uso auxiliar, composto pelos limites das Terras Indígenas, provenientes do shapefile “ti_sirgas” da FUNAI, recortados pelos novos limites dos biomas do Brasil. O shapefile original de Terras Indígenas pode ser acessado em: https://geoserver.funai.gov.br/geoserver/web/?0 e os metadados originais podem ser acessado em: https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/geoprocessamento-e-mapas.  
+
+Disponibilizado para Amazônia Legal e dos biomas Amazônia, Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre na lista de opções o recorte territorial de interesse (Amazônia Legal, Amazônia, Cerrado, Caatinga, Mata Atlântica, Pampa ou Pantanal). Dentro da opção Auxiliares, encontre a opção com as Terras Indígenas presentes no recorte selecionado:
+ 
+Efetuar a aquisição clicando na opção Download.
+	
+	
+Limites da Amazônia Legal e dos Biomas Brasileiros	
+Descrição
+
+●	São os dados de limites de cada recorte regional. Cada um possui as seguintes especificidades:
+○	Amazônia Legal: Dado de terceiro. A Amazônia Legal é um conceito político-administrativo instituído pelo governo brasileiro para o desenvolvimento social e econômico dos estados da região amazônica. O limite da Amazônia Legal foi estabelecido originalmente pela Lei 1.806, de 6 de janeiro de 1953, com posteriores alterações na sua delimitação conforme a evolução político-administrativa do território brasileiro. Engloba nove estados brasileiros, pertencentes à bacia amazônica, sendo eles: Acre, Amapá, Amazonas, Mato Grosso, Pará, Roraima, Rondônia, Tocantins e a região oeste do meridiano 44º do estado do Maranhão.
+○	Biomas: Dados de terceiros. Os dados provêm dos mapas temáticos do território brasileiro: Vegetação, Geologia, Geomorfologia e Solos (IBGE de 1998 a 2017), no escopo dos Projetos SIVAM e Mapeamento de Recursos Naturais da Coordenação de Recursos Naturais e Estudos Ambientais, disponíveis no Banco de Dados de Informações Ambientais. Além de consultas a mapeamentos preexistentes, revisões bibliográficas e verificações em campo. De forma geral foi elaborado tendo por base as fitofisionomias do Mapa de Vegetação do Brasil na mesma escala, com exceção do bioma Pantanal, que respeita características hidrogeomorfológicas referente às áreas de inundação. Os metadado originais podem ser acessados em https://metadados.inde.gov.br/geonetwork/srv/por/catalog.search#/metadata/97a9e71c-fd43-4423-bde0-6e26dca504d0 e o shapefile original dos biomas do Brasil foi obtido via HTTP dos seguintes endereços: https://www.ibge.gov.br/geociencias/downloads-geociencias.html e http://geoftp.ibge.gov.br/informacoes_ambientais/estudos_ambientais/biomas/vetores/biomas_250mil.zip.
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre na lista de opções o recorte territorial de interesse (Amazônia Legal, Amazônia, Cerrado, Caatinga, Mata Atlântica, Pampa ou Pantanal). Dentro da opção “Auxiliares”, encontre a opção com os Limites do recorte selecionado:
+ 
+Efetuar a aquisição clicando na opção Download.
+	
+	
+
+Processamento
+Seleção dos Dados Auxiliares – definição da região de interesse subnacional	Para selecionar os limites do Estado, Município e Unidade de Conservação de interesse, acesse a tabela de atributos do arquivo vetorial. Os nomes dos limites são listados no atributo “nome” e podem ser encontrados visualmente ou através da ferramenta Selecionar/filtrar feições usando forma:
+ 
+O nome completo do limite deve ser preenchido na caixa de busca do atributo “nome” e a opção “Igual a (=)” deve ser selecionada, seguido do comando Selecionar Feições. Para selecionar mais de um limite, clique novamente na ferramenta Selecionar/Filtrar feições usando forma, digite o outro nome completo do limite e selecione o comando Adicionar à Seleção Atual, que se encontra abaixo da opção Selecionar Feições.
+Para selecionar o limite de Terras Indígenas, realizar o mesmo procedimento, porém utilizando a coluna “terrai_nom”.
+Para salvar os limites filtrados em uma nova camada vetorial, clique com o botão direito do mouse na camada vetorial e selecione a opção Exportar e depois Guardar elementos selecionados como…: 
+O formato escolhido deve ser Shapefile, o SRC deve ser o mesmo da camada vetorial, SIRGAS 2000 (EPSG:4674) e o nome do novo arquivo deve ser preenchido.
+Padronização de arquivos vetoriais de outras fontes	Para realizar os procedimentos a seguir utilizando os limites de arquivos de terceiros, é necessário que os dados estejam no mesmo Sistema de Referência de Coordenadas (SRC) dos dados do Prodes, padronizado para SIRGAS 2000 (EPSG:4674). Se ele estiver em outro SRC, a conversão pode ser feita a partir do painel de ferramentas, selecionando Vetor → Gerenciar Dados → Reprojetar camada e o novo SRC deve ser escolhido. O procedimento resultará na criação de uma nova camada temporária denominada “Reprojetado(a)”, que pode ser salva e renomeada clicando no botão direito do mouse e selecionando Tornar Permanente.
+Além dos limites administrativos, pode-se também desagregar os dados do BiomasBR para limites que correspondem a classes de uso e cobertura da terra, que podem ser obtidos a partir do POP 4. 
+Para selecionar limites específicos dentro desse arquivo de outras fontes, identificar qual o campo que consta a informação de interesse e prosseguir utilizando as instruções da operação descrita anteriormente - Seleção dos limites subnacionais. 
+
+2	Prodes
+
+O Monitoramento Anual da Supressão da Vegetação Nativa (Prodes) é uma iniciativa governamental conduzida pelo Instituto Nacional de Pesquisas Espaciais (INPE) que visa monitorar a supressão de vegetação natural nos biomas brasileiros por meio de imagens de satélite, com o objetivo de estimar a taxa anual de perda de vegetação nativa a nível nacional. O Prodes considera como desmatamento ou supressão a perda completa da vegetação primária por ações antropogênicas, independentemente da futura utilização destas áreas. Além disso, no caso da Amazônia, diferencia o desmatamento ocorrido por corte raso ou por degradação florestal progressiva. O desmatamento por corte raso resulta na remoção completa da cobertura florestal em um curto intervalo de tempo (entre um ano e outro), geralmente seguida por queimadas para eliminar os resíduos e a posterior substituição por outros usos da terra. O processo de desmatamento por degradação progressiva da floresta, é mais lento (podendo levar anos até configurar um desmatamento) e difícil de detectar por imagens de satélite, sendo caracterizado pela perda gradual da floresta devido à extração seletiva de madeira e entradas sucessivas de fogo, até o colapso da estrutura florestal e abertura completa do dossel.
+Além dos dados acumulados, também são disponibilizados dados incrementais anuais, isto é, as estimativas de novas áreas desmatadas a cada ano. O sistema utiliza imagens dos satélites Landsat-8, Landsat-9, SENTINEL-2 e CBERS-4/4A, com resolução espacial entre 20-30 metros. As imagens são obtidas preferencialmente durante a estação seca, devido à menor cobertura de nuvens e maior disponibilidade de imagens, conferindo melhores condições para a detecção do desmatamento. Para a Amazônia Legal, o Prodes disponibiliza o cálculo da taxa (km2/ano) ou incremento anual de desmatamento/supressão, utilizando os dados incrementais do ano-Prodes, que vai de 01 de agosto do ano anterior até 31 de julho do ano de interesse. Assim, é realizada uma estimativa da área desmatada para o ano. Por exemplo, a taxa calculada para o ano-Prodes 2023, estima o desmatamento ocorrido entre 01/08/2022 e 31/07/2023 na Amazônia Legal. Entretanto, as datas das imagens podem variar, de acordo com o período seco de cada região e com a data de passagem do satélite. Por isso, o valor estimado pela taxa pode ser um pouco diferente do valor mapeado. A metodologia pode ser acessada na íntegra pelo link: <http://www.obt.inpe.br/OBT/assuntos/programas/amazonia/prodes>. 
+
+
+2.1 - Bioma Amazônia
+POP 2.1 - Descrição, aquisição e processamento dos dados do sistema Prodes
+
+Procedimento Operacional Padrão 2.1
+Bioma Amazônia
+Descrição, aquisição e processamento dos dados do sistema Prodes 
+Objetivo	Fornecer a descrição e os procedimentos para aquisição dos dados de monitoramento anual da supressão da vegetação nativa do sistema Prodes para uma determinada ROI subnacional dentro dos limites do bioma Amazônia.
+Produtos	Ao executar esse POP, o usuário adquirirá os seguintes produtos para a ROI subnacional dentro dos limites do bioma Amazônia:
+
+●	Arquivo vetorial dos incrementos anuais de áreas desmatadas:
+○	maiores que 1 ha, a partir de 2001, para áreas não florestais
+○	maiores que 6,25 ha, a partir de 2008, para áreas florestais
+○	entre 1 e 6,25 ha, a partir de 2016, para as áreas florestais;
+●	Arquivo matricial de 2000 até o último ano-Prodes, organizado por ano;
+●	Arquivo vetorial no formato GeoPackage com o desmatamento acumulado de 2007 até o último ano-Prodes;
+●	Arquivo vetorial das áreas incrementais de resíduo de desmatamento/supressão, a partir de 6,25 ha, para áreas florestais.
+
+Após o processamento dos dados, o usuário terá acesso aos seguintes produtos:
+
+●	Arquivo matricial e vetorial resultante da desagregação dos dados Prodes ao nível subnacional;
+●	Arquivo matricial e vetorial filtrados para os anos de interesse;
+●	Arquivo vetorial filtrados para os tipos de desmatamento de interesse.
+Descrição e Aquisição
+Incremento Anual de Desmatamento / Supressão	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “Incremento Anual de Desmatamento” para o bioma Amazônia, disponibilizado na plataforma TerraBrasilis. 
+O incremento anual são as áreas de desmatamento/supressão detectadas em um intervalo de um ano-Prodes, excluindo aquelas já mapeadas nos anos anteriores. 
+Este arquivo vetorial no formato shapefile contém polígonos de desmatamento, discretizados por ano. Nas áreas florestais, o arquivo apresenta apenas polígonos com área superior a 6,25 hectares; nas áreas não florestais, apenas aqueles com mais de 1 hectare. Para os polígonos das áreas florestais, há diferenciação entre desmatamento ocorrido por corte raso (subclasses desmatamento com solo exposto, com vegetação, mineração e floresta inundada) e por degradação florestal progressiva.
+A produção do dado foi iniciada em 1988 e vem sendo anualmente atualizada desde então. Até 2007 os dados são apresentados de forma acumulada (agregada) e a série com frequência anual tem início em 2008. A série histórica foi construída a partir da interpretação visual de imagens do satélite Landsat ou similares - com resolução próxima de 30m - e em escala de trabalho de 1:75.000.
+O Sistema de Referência Geográfica é SIRGAS 2000 (EPSG:4674). Possui escala de 1:250.000 e frequência de atualização anual.
+
+O arquivo vetorial contém os seguintes campos:
+●	uuid: identificador único universal de cada feição;
+●	uid: identificador numérico usado na exportação do dado para arquivos;
+●	state: estado/unidade da federação;
+●	path_row: código da cena formado por linha/coluna da grade de passagem do satélite Landsat;
+●	main_class: nome da classe principal atribuída à feição. Neste caso, a classe principal é "desmatamento";
+●	class_name: nome da classe específica atribuída à feição ("dYYYY" onde YYYY=ano com 4 dígitos a partir de 2008). A letra “d” indica polígono de desmatamento e a letra “r” indica polígonos residuais de desmatamento (polígonos incluídos após a revisão nos levantamentos de anos anteriores ao ano corrente de mapeamento, resultando em áreas de resíduo de desmatamento);
+●	sub_class: informação detalhada da classe;
+●	def_cloud: Ano que indica desde quando esta área está coberta por nuvens. Fazendo a diferença do ano corrente onde se detectou o desmatamento e def_cloud, temos o número de anos coberto por nuvens. Preenchido quando aplicável;
+●	julian_day: dia juliano;
+●	image_date: data da cena usada para obter a feição;
+●	year: ano do desmatamento, usado para facilitar as consultas ao banco de dados;
+●	area_km: área calculada para a feição em km²;
+●	scene_id: identificador da cena no banco de dados, usado para consultas;
+●	publish_year: usado para permitir a publicação do dado no GeoServer com dimensão temporal;
+●	source: origem do polígono (amazonia, cerrado, caatinga, mata_atlantica, pampa, pantanal), caso o polígono tenha sido incorporado de outro projeto, por exemplo, devido à alteração do mapa de biomas ou ainda às zonas da Amazônia Legal no Cerrado e Pantanal. Preenchido quando aplicável;
+●	satellite: nome do satélite. Em geral, será Landsat e Sentinel, mas em alguns casos, outro satélites podem ser utilizados;
+●	sensor: nome do sensor que obteve a imagem;
+●	geom: indica se a feição é composta por um ou mais polígonos;
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre a aba Bioma Amazônia – PRODES (Desmatamento) e selecione a opção Incremento Anual do Desmatamento – Shapefile:
+
+NOTA: O plugin DesagregaBiomasBR realiza o download automático destes dados via WFS, com paginação automática para grandes volumes de dados (especialmente importante para o bioma Amazônia que pode ter mais de 200.000 polígonos).
+
+ 
+
+Efetuar a aquisição clicando na opção Download.
+	
+	
+	
+Incremento Anual de Desmatamento (polígonos entre 1 e 6,25 ha) 	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “Incremento anual no desmatamento (polígonos com área entre 1 e 6,25 ha)” para o bioma Amazônia, disponibilizado na plataforma TerraBrasilis. 
+Arquivo vetorial no formato shapefile contendo áreas desmatadas entre 1 e 6,25 ha, a partir de 2016, discretizadas por ano. Possui escala de 1:250.000 e frequência de atualização anual. Neste arquivo não há diferenciação entre desmatamento por corte raso e degradação florestal. 
+O Sistema de Referência Geográfica é SIRGAS 2000 (EPSG:4674).
+
+O arquivo contém os seguintes campos:
+●	uuid:- identificador único universal de cada feição
+●	uid: identificador numérico usado na exportação do dado para arquivos;
+●	state: estado/unidade da federação
+●	path_row: código da cena formado por linha/coluna da grade de passagem do satélite Landsat
+●	main_class: nome da classe principal atribuída à feição
+●	class_name: nome da classe específica atribuída à feição (Ex.: Resíduo (polígonos incluídos após a revisão nos levantamentos de anos anteriores ao ano corrente de mapeamento, resultando em áreas de resíduo de desmatamento) em 2020 = "r2020")
+●	def_cloud: Ano que indica desde quando esta área está coberta por nuvens. Fazendo a diferença do ano corrente onde se detectou o desmatamento e def_cloud, temos o número de anos coberto por nuvens. Preenchido quando aplicável.
+●	julian_day: dia juliano
+●	image_date: data da cena usada para obter a feição.
+●	year: ano do desmatamento, usado para facilitar as consultas ao banco de dados
+●	area_km: área calculada para a feição em km²
+●	scene_id: identificador da cena no banco de dados, usado para consultas
+●	publish_year: usado para permitir a publicação do dado no GeoServer com dimensão temporal.
+●	source: origem do polígono (amazonia, cerrado, caatinga, mata_atlantica, pampa, pantanal), caso o polígono tenha sido incorporado de outro projeto, por exemplo, devido à alteração do mapa de biomas ou ainda às zonas da Amazônia Legal no Cerrado e Pantanal.
+●	satellite: nome do satélite. Em geral será Landsat ou Sentinel, mas em alguns casos, outros satélites podem ser utilizados.
+●	sensor: nome do sensor que obteve a imagem.
+●	geom: indica se a feição composta por um ou mais polígonos 
+
+Aquisição via Portal TerraBrasilis
+
+●	Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre a aba Bioma Amazônia – PRODES (Desmatamento) e selecione a opção Incremento Anual do Desmatamento (polígonos entre 1 e 6,25 ha) - Shapefile:
+ 
+
+Efetuar a aquisição clicando na opção Download.
+
+	
+	
+Dados Completos em Formato Matricial 	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “PRODES completo em formato matricial – Geotiff” para o bioma Amazônia, disponibilizado na plataforma TerraBrasilis. 
+Os polígonos das áreas florestais contêm áreas desmatadas maiores que 6,25 ha. Este dado inclui também as áreas de hidrografia, não floresta (primeira versão), não floresta 2 (revisão da primeira versão), polígonos de desmatamento residuais (a partir de 2010; incluídos após a revisão nos levantamentos de anos anteriores ao ano corrente de mapeamento, resultando em áreas de resíduo de desmatamento), áreas de nuvem para o último período de levantamento, e floresta remanescente (composta por todos os demais pixels). Possui escala de 1:250.000, sistema de coordenadas SIRGAS 2000 (EPSG:4674) e frequência de atualização anual.
+
+O arquivo em formato texto (.txt) contém a área total de cada classe, de acordo com a organização abaixo:
+●	As classes de 0 a 23 correspondem aos anos de desmatamento de 2000 a 2023 e são nomeados pela letra “d” seguido do ano de ocorrência (“dXXXX”). Até 2007 alguns anos apresentam dados agregados,
+●	Classes de 50-63 correspondem aos resíduos (incluídos após a revisão nos levantamentos de anos anteriores ao ano corrente de mapeamento, resultando em áreas de resíduo de desmatamento) de desmatamento de 2010 a 2023, seguindo a ordem dos anos, nomeados pela letra “r” seguido do ano de ocorrência (“rXXXX”),
+●	Classe 91 representa hidrografia;
+●	Classe 99 representa nuvem;
+●	Classe 100 representa áreas de vegetação nativa;
+●	Classe 101 representa áreas de não floresta.
+
+O arquivo .qml contém a legenda para as classes, compatível com o software QGIS.
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre a aba Bioma Amazônia – PRODES (Desmatamento) e selecione a opção Dados Completos em Formato Matricial - Geotiff:
+ 
+
+Efetuar a aquisição clicando na opção Download.
+Ao abrir o arquivo matricial no QGIS e clicar em qualquer um dos pixels, as informações da feição aparecem conforme a figura abaixo:
+ 
+
+Para identificar a classe da feição, é necessário clicar na camada com o botão direito, clicar na opção Criar tabelas de atributo do raster → Gerenciado pelo provedor dos dados. Assim, o atributo “Class” é adicionado no grupo de feições dos pixels. 
+	
+	
+	
+Dados Completos em Formato Vetorial 	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “PRODES completo em formato vetorial - GeoPackage” para o bioma Amazônia, disponibilizado na plataforma TerraBrasilis. 
+Arquivo único e em formato GeoPackage contendo as seguintes classes: desmatamento acumulado, incrementos anuais no desmatamento, hidrografia, áreas de não floresta e resíduo. Os polígonos apresentam o desmatamento acumulado até 2007 e os incrementos anuais a partir de 2008. A área mínima mapeada é de um hectare (1 ha).
+
+Os campos presentes nos arquivos de Desmatamento Acumulado, Incremento Anual, Hidrografia, Resíduos de Desmatamento, e Não Floresta são:
+●	uuid: identificador único universal de cada feição;
+●	uid: identificador para rastreabilidade da feição na origem/produção do dado
+●	geom: feição composta por um ou mais polígonos - geometria obtida por interpretação visual de imagem de satélite.
+●	state:  estado/unidade da federação;
+●	source: nome da origem do polígono (amazonia, cerrado, caatinga, mata_atlantica, pampa, pantanal), caso o polígono tenha sido incorporado de outro projeto, por exemplo, devido à alteração do mapa de biomas ou ainda às zonas da Amazônia Legal no Cerrado e Pantanal
+●	path_row: código da cena formado por linha/coluna da grade de passagem do satélite Landsat;
+●	path_row: código da cena formado por linha/coluna da grade de passagem do satélite Landsat
+●	main_class: nome da classe principal atribuída à feição ("DESMATAMENTO"; "HIDROGRAFIA"; "RESIDUO"; "NAO_FLORESTA");
+●	class_name: nome da classe específica atribuída à feição ("dYYYY" onde d= desmatamento e YYYY=ano com 4 dígitos a partir de 2008; "HIDROGRAFIA"; "rYYYY" onde r é residual e YYYY=ano com 4 dígitos a partir de 2010; "NAO_FLORESTA" e "NAO_FLORESTA2");
+●	sub_class: informação detalhada da classe;
+●	satellite: nome do satélite. Em geral será o Landsat e Sentinel, mas em alguns casos, outros satélites podem ser utilizados.
+●	sensor: nome do sensor que obteve a imagem.
+●	def_cloud: Ano que indica desde quando esta área está coberta por nuvens. Fazendo a diferença do ano corrente onde se detectou o desmatamento e def_cloud, temos o número de anos coberto por nuvens. Preenchido quando aplicável;
+●	state: nome do estado, unidade da federação, quando aplicável.
+●	julian_day: dia juliano;
+●	image_date: data da cena usada para obter a feição;
+●	year: ano da feição, usado para facilitar as consultas ao banco de dados
+●	area_km: área calculada para a feição em km²
+●	scene_id: identificador da cena no banco de dados, usado para consultas 
+●	publish_year: usado para permitir a publicação do dado no GeoServer com dimensão temporal (quando aplicável)
+●	source: origem do polígono (amazonia, cerrado, caatinga, mata_atlantica, pampa, pantanal), caso o polígono tenha sido incorporado de outro projeto, por exemplo, devido à alteração do mapa de biomas ou ainda às zonas da Amazônia Legal no Cerrado e Pantanal. Preenchido quando aplicável;
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre a aba Bioma Amazônia – PRODES (Desmatamento) e selecione a opção PRODES completo em formato vetorial - GeoPackage:
+
+ 
+
+Efetuar a aquisição clicando na opção Download.
+
+	
+	
+	
+Resíduo Anual na Supressão da Vegetação Nativa	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “Resíduo anual na supressão da vegetação nativa - Shapefile” para o bioma Amazônia, disponibilizado na plataforma TerraBrasilis. 
+Esse conjunto de dados apresenta a revisão nos levantamentos de anos anteriores ao ano corrente de mapeamento, resultando em áreas de resíduo de desmatamento. O mapeamento utiliza imagens do satélite para registrar e quantificar as áreas desmatadas a partir de 6,25. Possui sistema de coordenadas EPSG:4674 e frequência de atualização anual. Neste arquivo não há diferenciação entre desmatamento/supressão por corte raso e degradação florestal.
+
+O arquivo vetorial contém os seguintes campos:
+●	uuid: identificador único universal de cada feição
+●	uid: identificador numérico usado na exportação do dado para arquivos;
+●	state: estado/unidade da federação
+●	path_row: código da cena formado por linha/coluna da grade de passagem do satélite Landsat
+●	main_class: nome da classe principal atribuída à feição
+●	class_name: nome da classe específica atribuída à feição (Ex.: Resíduo em 2020 = "r2020")
+●	def_cloud: Ano que indica desde quando esta área está coberta por nuvens. Fazendo a diferença do ano corrente onde se detectou o desmatamento e def_cloud, temos o número de anos coberto por nuvens. Preenchido quando aplicável.
+●	julian_day: dia juliano
+●	image_date: data da cena usada para obter a feição.
+●	year: ano do desmatamento, usado para facilitar as consultas ao banco de dados
+●	area_km: área calculada para a feição em km²
+●	scene_id: identificador da cena no banco de dados, usado para consultas
+●	publish_year: usado para permitir a publicação do dado no GeoServer com dimensão temporal.
+●	source: origem do polígono (amazonia, cerrado, caatinga, mata_atlantica, pampa, pantanal), caso o polígono tenha sido incorporado de outro projeto, por exemplo, devido à alteração do mapa de biomas ou ainda às zonas da amazônia legal no cerrado e pantanal.
+●	satellite: nome do satélite. Em geral será o landsat mas em alguns casos, outro satélites podem ser utilizados.
+●	sensor:  nome do sensor que obteve a imagem.
+●	geom:  feição composta por um ou mais polígonos - geometria obtida por interpretação visual de imagem de satélite.
+
+Aquisição via Portal TerraBrasilis
+
+●	Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre a aba Bioma Amazônia – PRODES (Desmatamento) e selecione a opção Resíduo Anual na Supressão da Vegetação Nativa:
+
+
+ 
+Efetuar a aquisição clicando na opção Download.
+	
+	
+Processamento
+Desagregação do arquivo matricial a nível subnacional	Para desagregar o dado matricial do Prodes (descrito em Dados Completos em Formato Matricial), ao nível subnacional, é recomendado criar o índice espacial para a camada vetorial com o limite subnacional que será utilizado. Clique com o botão direito do mouse na camada, selecione Propriedades → Fonte → Criar Índice Espacial.
+Para executar a desagregação, selecione a camada matricial, depois selecione Raster → Extrair → Recortar raster pela camada de extensão, selecionar a camada vetorial com o limite subnacional, conferir se ambas estão no mesmo SRC e em seguida clicar em Executar.
+Após a execução da operação, a simbologia padrão é definida como “Banda simples cinza”. Para carregar o estilo de simbologia padrão dos dados BiomasBR, clique com o botão direito do mouse na camada, selecione Propriedades → Simbologia. No canto inferior esquerdo, clicar em Estilo:
+
+
+ 
+Selecionar Carregar Estilo e selecionar o arquivo “.qml” que é baixado junto com o arquivo matricial. Selecionar Aplicar para que a operação seja concluída. 
+	
+Desagregação dos arquivos vetoriais ao nível subnacional	Para desagregar os dados vetoriais (Incrementos Anuais, Dados Completos e Resíduo Anual) do Prodes ao limite subnacional, é necessário criar o índice espacial para ambas as camadas que serão utilizadas. Clique com o botão direito do mouse na camada, selecione Propriedades → Fonte → Criar Índice Espacial.
+Com a camada vetorial do Prodes selecionada, a partir do painel de ferramentas, clique em Vetor → Geoprocessamento → Recortar: Ao selecionar o limite subnacional como Camada de Sobreposição, conferir se ambas estão no mesmo SRC e em seguida clicar em Executar.
+O procedimento resultará na criação de uma nova camada temporária denominada “Recortado”, que pode ser salva e renomeada clicando no botão direito do mouse e selecionando Tornar Permanente.
+Seleção por ano-Prodes	A informação temporal dos dados Prodes é fornecida em dois formatos: 1) ano-Prodes (data de referência de medição é agosto do ano de interesse) identificado nos campos "class_name" e "sub_class", e 2) ano-civil, identificado no campo "image_date". 
+
+NOTA: O plugin DesagregaBiomasBR aplica automaticamente filtros temporais durante o download via WFS, permitindo selecionar intervalos de anos específicos diretamente na interface, evitando o download de dados desnecessários.
+
+A filtragem manual dos anos pode ser feita visualmente ou através da ferramenta Selecionar/filtrar feições usando forma: 
+ 
+O ano deve ser preenchido na caixa de busca do atributo “year” e a opção Igual a (=) deve ser selecionada, seguido do comando Selecionar Feições. Para selecionar mais de um ano, clique novamente na ferramenta Selecionar/Filtrar feições usando forma, digite o outro ano e selecione o comando Adicionar à Seleção Atual, localizado abaixo da opção Selecionar Feições.
+Para selecionar múltiplos anos, o procedimento mais eficiente é através da Ferramenta de Consulta (também chamada de Query), que é acessada clicando com botão direito do mouse na camada, depois em Propriedades → Fonte:
+ 
+Na lista de campos da Ferramenta de Consulta, dê duplo-clique no campo “year” e ele assim será inserido na caixa de Forneça expressão específica de filtragem entre aspas. Para visualizar todos os valores desse campo, mantenha ele selecionado, clique em Tudo e todos os valores do campo “year” serão listados. 
+Preencha a caixa de expressão com o campo do ano entre aspas, seguido do operador = e do ano de interesse entre apóstrofes. Entre cada seleção deve ser selecionado o operador OR. Para selecionar um intervalo entre anos, usar os operadores >=, <= e AND com os anos de interesse:
+
+ 
+
+Confirme o procedimento clicando em OK e a tabela mostrará somente os dados dos anos selecionados. Com esse procedimento, os dados são apenas filtrados, mas são mantidos no arquivo. Para gerar um arquivo com somente os dados filtrados, é necessário salvá-lo com um novo arquivo. 
+	
+	
+Seleção por tipo de desmatamento 	O arquivo vetorial de polígonos de desmatamento acima de 6,25ha no bioma Amazônia apresenta diferenciação entre desmatamento por “corte raso com solo exposto”, “corte raso com vegetação”, “degradação progressiva”, “mineração”, “floresta inundada” ou “reservatorio”. Para selecionar as detecções do Prodes com algum tipo específico de desmatamento, acesse a tabela de atributos do arquivo vetorial. Os tipos de desmatamento são apresentados no campo “sub_class” e podem ser encontrados visualmente ou através da ferramenta Selecionar/filtrar feições usando forma, identificado a seguir: 
+ 
+O tipo de desmatamento deve ser preenchido na caixa de busca do atributo “sub_class” e a opção Igual a (=) deve ser selecionada, seguido do comando Selecionar Feições. Para selecionar mais de um tipo, clique novamente na ferramenta Selecionar/Filtrar feições usando forma, digite o outro tipo de desmatamento e selecione o comando Adicionar à Seleção Atual, localizado abaixo de Selecionar Feições.
+Para selecionar múltiplos tipos de desmatamento de forma eficiente, utilize a Ferramenta de Consulta (Query). Para acessá-la, clique com o botão direito do mouse sobre a camada desejada, selecione Propriedades → Fonte. A partir dessa interface, é possível construir expressões para filtrar os dados conforme os critérios específicos de classificação do desmatamento:
+ 
+Para inserir o campo "sub_class" na caixa Forneça expressão específica de filtragem, localize-o na lista de campos da Ferramenta de Consulta e realize um duplo clique sobre ele. O campo será automaticamente adicionado entre aspas. Para visualizar todos os valores atribuídos a esse campo, mantenha-o selecionado, clique na opção Tudo, e a lista completa dos tipos de desmatamento será exibida.
+Selecione o operador "=", clique duas vezes sobre o valor correspondente ao tipo de desmatamento de interesse e, caso não seja feito automaticamente, insira-o entre apóstrofes (‘valor’). Em seguida, utilize o operador "OR", seguido do campo "sub_class" e do próximo valor desejado. Repita esse procedimento para cada tipo de desmatamento de interesse até concluir a seleção desejada. 
+ 
+Confirme a operação clicando em OK. A tabela exibirá apenas os dados correspondentes aos tipos de desmatamento selecionados. Esse procedimento não altera os dados originais da camada, apenas aplica um filtro temporário. Para criar uma camada contendo exclusivamente os dados filtrados, salve-a como um novo arquivo.
+	
+	
+	
+Seleção por ano-Prodes & tipo de desmatamento	Para fazer a seleção de um período temporal específico e de tipos de degradação em uma mesma operação, utilize a Ferramenta de Consulta (também chamada de Query), que é acessado clicando com o botão direito do mouse na camada, depois em Propriedades → Fonte:
+ 
+Para aplicar o filtro, insira a estrutura da seguinte expressão na caixa Forneça expressão específica de filtragem: 
+
+("year"  >  = 2016  AND "year"  <  = 2023)
+ AND 
+("sub_class"  = 'corte raso com solo exposto'  OR "sub_class"  = 'corte raso com vegetação')
+
+Nesta expressão:
+●	"year" >= define o início do intervalo temporal
+●	"year" <= determina o final do intervalo temporal
+●	AND determina que as feições selecionadas atendam simultaneamente às condições de data e de sub classe
+●	"sub_class" = 'corte raso com solo exposto' OR "sub_class" = 'corte raso com vegetação' filtra apenas as feições indicadas 
+ 
+Confirme o procedimento clicando em OK e a tabela mostrará somente as feições com os anos e tipos de desmatamento/supressão selecionados. Com esse procedimento, os dados são apenas filtrados, então eles são mantidos. Para gerar uma camada somente com os dados filtrados, salve-a como um novo arquivo.
+
+	
+Cálculo da área 	Para o cálculo da área, é essencial garantir que as configurações de medição no projeto estejam ajustadas corretamente. As propriedades do projeto podem ser acessadas no painel de ferramentas, em Projeto → Propriedades. 
+A configuração do elipsóide, utilizada nos cálculos de distância e área, deve ser definida como None/Planimetric para realizar cálculos em uma superfície plana, sem considerar a curvatura da Terra. 
+ 
+
+O cálculo da área pode ser realizado para cada feição da camada, agrupando os valores por um campo específico (por exemplo, por ano) ou considerando a área total. Para calcular a área de cada feição, é necessário acessar a ferramenta Calculadora de Campo, disponível no painel de ferramentas da tabela de atributos. Na Calculadora de Campo, inserir o nome do novo campo que armazenará os valores de área. Para facilitar a identificação, sugerimos o nome “Area_km2”, ajustando a unidade métrica conforme necessário. Certificar de selecionar a opção Número decimal (real) em Tipo do novo campo para garantir que os valores sejam armazenados com precisão. Na caixa de expressão, inserir a fórmula $area/1000000 para realizar a conversão de metros quadrados (unidade padrão) para quilômetros quadrados. Para calcular a área em hectares, utilizar a fórmula $area/10000.
+O arquivo original do Prodes contém uma coluna denominada “area_km”, que se refere à área individual de cada polígono no arquivo. No entanto, essa coluna permanece inalterada e continua refletindo os valores dos polígonos originais. Por isso, atentar se caso tiver havido quaisquer mudanças nas feições, a coluna “area_km” deve ser removida nessa etapa. Os valores corretos das áreas unificadas estarão na nova coluna criada pelo usuário, como “Area_km2” ou outro nome designado.
+
+União das feições
+Para calcular a área por campo, é necessário unificar os polígonos pertencentes ao mesmo grupo de interesse. Esse procedimento pode ser feito utilizando a ferramenta Dissolver. No painel de ferramentas, acesse a opção Vetor → Geoprocessamento → Dissolver. Para selecionar os campos de interesse, clique no botão de Dissolver campos e os selecione. Esse processo agrupa os polígonos com valores iguais no campo especificado, permitindo o cálculo da área consolidada para cada valor e prevenindo a duplicação de polígonos. Selecione os campos que deseja agrupar para realizar o cálculo da área:
+ 
+Essa operação criará uma nova camada temporária em que os polígonos foram unificados de acordo com os campos selecionados. Para unificar todos os polígonos do arquivo sem realizar uma separação por campo (para o cálculo da área inteira), basta deixar a opção Dissolver campo(s) em branco. Isso criará uma camada onde todos os polígonos serão combinados em uma única feição. Extrair o cálculo de área para camadas com feições unificadas da mesma forma que foi descrita para camadas com feições separadas. 
+ 
+	
+	
+	
+Limpeza, Padronização e Exportação dos arquivos vetoriais	
+Para iniciar a limpeza e padronização dos arquivos vetoriais, ative o modo de edição na tabela de atributos. Para remover campos desnecessários, acesse a tabela de atributos e selecione a opção Excluir campo. Caso tenha sido realizada a operação Dissolve ou qualquer outro procedimento que altere o tamanho original dos polígonos, é recomendável remover a coluna “area_km” presente no arquivo original. Esse campo mantém os valores de área correspondentes aos polígonos antes da modificação, o que pode gerar inconsistências na análise. Para garantir que os cálculos de área reflitam os polígonos unificados corretamente, utilize a coluna recém-criada com os valores atualizados, como “Area_km2”, ou outro nome definido na etapa de cálculo.
+Para modificar os nomes dos campos existentes, clique com o botão direito do mouse sobre a camada e selecione Propriedades → Campos, onde será possível editar os nomes conforme necessário. Essa etapa é útil para padronizar a nomenclatura e facilitar a identificação das colunas, especialmente quando novos campos foram adicionados ou cálculos foram realizados. Após as edições, confirme as alterações para que os novos nomes sejam aplicados corretamente na tabela de atributos.
+Para copiar os valores de um campo para um novo campo, utilize a Calculadora de Campo. No espaço destinado à Expressão, insira o nome do campo que deseja copiar, colocando-o entre aspas. Esse procedimento permite duplicar os valores de um campo existente para outro, preservando as informações originais enquanto possibilita a aplicação de modificações ou formatações na nova coluna. Após inserir a expressão, confirme a operação para que os valores sejam transferidos corretamente. Essa operação pode ser utilizada para modificar a configuração do campo, por exemplo alterar de número decimal para número inteiro:
+
+ 
+Para adicionar campos em um arquivo com poucas feições, clique na opção Novo campo do painel de ferramentas da tabela de atributos:
+ 
+O nome do novo campo deve conter no máximo 10 caracteres, garantindo compatibilidade com as restrições do formato de dados utilizado. Além disso, é necessário selecionar o tipo de dado adequado ao conteúdo que será armazenado. Para valores numéricos, escolha Número decimal (real) se forem necessários valores com casas decimais ou Número inteiro para valores sem frações. Caso o campo armazene texto, selecione a opção Texto e defina um tamanho adequado para os registros. Após preencher essas informações, confirme a criação do campo para que ele seja adicionado à tabela de atributos.
+Os valores podem ser inseridos manualmente, caso o arquivo contenha um número reduzido de polígonos. No entanto, para arquivos com uma grande quantidade de feições, é recomendável que a adição de novos campos e o preenchimento dos valores sejam realizados de forma automatizada. Para isso, utilizar a Calculadora de Campo disponível no painel de ferramentas da tabela de atributos, digitando os valores desejados entre apóstrofes (‘valor’) na caixa de Expressão.
+
+Recomenda-se que sejam adicionados os seguintes campos: 
+●	Analista/Responsável;
+●	Data da Análise;
+●	Órgão/Instituição/Agência Responsável;
+●	E-mail para contato
+●	Fonte dos dados
+
+Para definir a ordem dos campos na tabela de atributos, selecionar a opção Organizar colunas do painel de ferramentas da tabela de atributos.
+Para exportar a tabela de atributos em formato Excel, clique com o botão direito na camada desejada, selecione Exportar → Guardar elementos como.... Dentre as opções de formato, escolha a opção Planilha de Cálculo MS Office Open XML [XLSX].
+	
+	
+	
+
+
+2.2 - Amazônia Legal e Biomas Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal
+POP 2.2 - Descrição, aquisição e processamento dos dados do sistema Prodes
+
+
+Procedimento Operacional Padrão 2.2
+Amazônia Legal e biomas Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal
+Descrição, aquisição e processamento dos dados do sistema Prodes 
+Objetivo	Fornecer a descrição e os procedimentos para aquisição dos dados de monitoramento anual da supressão da vegetação nativa do sistema Prodes para uma determinada região de interesse subnacional dentro dos limites da Amazônia Legal e dos biomas Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal.
+Produtos	Ao executar esse POP, o usuário adquirirá os seguintes produtos para sua região de interesse em recorte subnacional desejado:
+
+●	Arquivo vetorial dos incrementos anuais de áreas desmatadas:
+○	maiores que 1 ha, a partir de 2001, para os biomas Mata Atlântica, Pantanal, Cerrado, Pampa e Caatinga 
+○	maiores que 6,25 ha, a partir de 2008, para a Amazônia Legal
+●	Arquivo vetorial dos incrementos parciais de desmatamento em regiões prioritárias da Amazônia Legal para o ano em andamento;
+●	Arquivo matricial de 2000 até o último ano-Prodes completo, organizados por ano;
+●	Arquivo vetorial no formato GeoPackage com o desmatamento acumulado de 2007 até o último ano-Prodes completo;
+●	Arquivo vetorial das áreas incrementais de resíduo de desmatamento/supressão, a partir de 1 ha para os biomas Cerrado, Caatinga, Mata Atlântica, Pampa e Pantanal, e a partir de 6,25 ha para a Amazônia Legal, organizados por ano;
+
+Após o processamento dos dados, o usuário terá acesso aos seguintes produtos:
+
+●	Arquivo matricial e vetorial resultante da desagregação dos dados Prodes ao nível subnacional;
+●	Arquivo matricial e vetorial filtrados para os anos de interesse;
+●	Arquivo vetorial filtrados para os tipos de desmatamento de interesse.
+	
+Descrição e Aquisição
+Incremento Anual de Desmatamento / Supressão	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “Incremento Anual de Desmatamento” para a Amazônia Legal e para os biomas caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal, disponibilizado na plataforma TerraBrasilis. 
+O incremento anual são as áreas de desmatamento/supressão detectadas em um intervalo de um ano-Prodes, excluindo aquelas já mapeadas nos anos anteriores. 
+Este arquivo vetorial no formato shapefile contém polígonos de desmatamento, discretizados por ano. Para os biomas Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal, esse dado contém polígonos acima de 1 ha. Para áreas florestais na Amazônia Legal, esse dado contém polígonos acima de 6,25 ha. 
+O Sistema de Referência Geográfica para todos os recortes regionais é SIRGAS 2000 (EPSG:4674), possui escala de 1:250.000 e frequência de atualização anual.
+
+O arquivo vetorial contém os seguintes campos:
+●	uuid: identificador único universal de cada feição;
+●	uid: identificador numérico usado na exportação do dado para arquivos;
+●	state: estado/unidade da federação;
+●	path_row: código da cena formado por linha/coluna da grade de passagem do satélite Landsat;
+●	main_class: nome da classe principal atribuída à feição. Neste caso, a classe principal é "desmatamento";
+●	class_name: nome da classe específica atribuída à feição ("dYYYY" onde YYYY=ano com 4 dígitos a partir de 2008). A letra “d” indica polígono de desmatamento e a letra “r” indica polígonos residuais de desmatamento (polígonos incluídos após a revisão nos levantamentos de anos anteriores ao ano corrente de mapeamento, resultando em áreas de resíduo de desmatamento);
+●	sub_class: informação detalhada da classe;
+●	def_cloud: Ano que indica desde quando esta área está coberta por nuvens. Fazendo a diferença do ano corrente onde se detectou o desmatamento e def_cloud, temos o número de anos coberto por nuvens. Preenchido quando aplicável;
+●	julian_day: dia juliano;
+●	image_date: data da cena usada para obter a feição;
+●	year: ano do desmatamento, usado para facilitar as consultas ao banco de dados;
+●	area_km: área calculada para a feição em km²;
+●	scene_id: identificador da cena no banco de dados, usado para consultas;
+●	publish_year: usado para permitir a publicação do dado no GeoServer com dimensão temporal;
+●	source: origem do polígono (amazonia, cerrado, caatinga, mata_atlantica, pampa, pantanal), caso o polígono tenha sido incorporado de outro projeto, por exemplo, devido à alteração do mapa de biomas ou ainda às zonas da Amazônia Legal no Cerrado e Pantanal. Preenchido quando aplicável;
+●	satellite: nome do satélite. Em geral, será Landsat e Sentinel, mas em alguns casos, outro satélites podem ser utilizados;
+●	sensor: nome do sensor que obteve a imagem;
+●	geom: indica se a feição é composta por um ou mais polígonos;
+
+Os dados de incremento anual de desmatamento possuem especificações dependendo do recorte, são elas:
+
+●	Amazônia Legal: A produção do dado foi iniciada em 1988 e vem sendo anualmente atualizada desde então. Até 2007 os dados são apresentados de forma acumulada (agregada) e a série com frequência anual tem início em 2008. A série histórica foi construída a partir da interpretação visual de imagens do satélite Landsat ou similares - com resolução próxima de 30m - e em escala de trabalho de 1:75.000. O produto é compatível com a escala final de 1:250.000.
+●	Cerrado: O desmatamento/supressão no bioma Cerrado deve considerar o dado agregado até 2000. Os incrementos constituem uma série histórica bienal para o período de 2002 a 2012 e anual a partir de 2013. Foi construído a partir da interpretação visual de imagens do satélite Landsat ou similares - com resolução próxima de 30m - e em escala de trabalho de 1:75.000. O produto é compatível com a escala final de 1:250.000.
+●	Caatinga: Os dados de incremento anual do desmatamento/supressão para o bioma Caatinga foi construído a partir da interpretação visual de imagens Landsat-5, Landsat-8/OLI e Sentinel, em escala de trabalho de 1:75.000. Este conjunto de dados é composto pelos dados de desmatamento e reservatório de água, sendo discriminados pela classe principal, atributo 'main_class'. O desmatamento completo no bioma Caatinga deve considerar o dado agregado até 2000 e os dados anuais a partir de 2004.
+●	Mata Atlântica, Pampa e Pantanal: Este recurso contém polígonos que identificam áreas de incremento anual da supressão da vegetação nativa. Foi construído a partir da interpretação visual de imagens Landsat-5, Landsat-8/OLI e Sentinel, em escala de trabalho de 1:75.000. O produto é compatível com a escala final de 1:250.000. O desmatamento completo nos biomas Mata Atlântica, Pampa e Pantanal deve considerar o dado agregado até 2000 e os dados anuais a partir de 2004.
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre a aba com o recorte territorial de interesse seguido por “– PRODES (Desmatamento)” e selecione a opção Incremento Anual do Desmatamento :
+
+ 
+
+Efetuar a aquisição clicando na opção Download.
+
+	
+	
+	
+	
+	
+Incremento Parcial de Desmatamento em Regiões Prioritárias 	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “Incremento no desmatamento - Shapefile (cenas prioritárias 2024)” para a Amazônia Legal, disponibilizado na plataforma TerraBrasilis. 
+Os dados de incremento parcial em regiões prioritárias contêm as áreas desmatadas no ano corrente, antes de completar o ano-Prodes. Historicamente foram usadas imagens Landsat, de diferentes sensores, mas no ano de 2024, foram empregadas imagens obtidas pelos satélites Sentinel-2 (sensor MSI) e Sentinel-1 (sensor SAR). Possui escala de 1:250.000, sistema de coordenadas SIRGAS 2000 (EPSG:4674) e frequência de atualização anual. Neste arquivo não há diferenciação entre desmatamento por corte raso e degradação florestal.
+Para o ano de 2024, o Sistema de Referência Geográfica da Amazônia Legal foi dividida em 516 tiles, que correspondem a regiões geográficas com códigos únicos (para mais informações, acesse: https://brazil-data-cube.github.io/specifications/concepts.html). Dentre eles, foram selecionados 268 tiles prioritários, que atendem aos critérios: 1) cobrir a região onde foram registrados pelo menos 90% do desmatamento no ano-Prodes anterior; 2) cobrir regiões onde foram registrados pelo menos 90% dos avisos de desmatamento do Monitoramento Diário da Supressão e Degradação da Vegetação Nativa (Deter) para o ano-Prodes anterior; 3) cobrir os 70 municípios prioritários para fiscalização referidos na portaria GM/MMA nº 834, de 09 de novembro de 2023.
+
+O arquivo do Incremento Parcial de Desmatamento em Regiões Prioritárias contém três arquivos vetoriais com as áreas de desmatamento, separados em: 
+●	Polígonos residuais (incluídos após a revisão nos levantamentos de anos anteriores ao ano corrente de mapeamento, resultando em áreas de resíduo de desmatamento)
+●	Polígonos entre 1 e 6,25 ha 
+●	Polígonos maiores que 6,25ha 
+
+Os três arquivos vetoriais contêm os seguintes campos: 
+●	uuid: identificador único de cada feição 
+●	uid: identificador para rastreabilidade da feição na origem/produção do dado
+●	state: estado/unidade da federação
+●	path_row: código da cena formado por linha/coluna da grade de passagem do satélite Landsat
+●	main_class: nome da classe principal atribuída à feição
+○	No arquivo de polígonos residuais, esse atributo apresenta a classe “RESIDUO”, indicando que são polígonos residuais
+○	No arquivo de polígonos acima de 6,25 ha, esse atributo apresenta a classe “Desmatamento”
+○	No arquivo de polígonos entre 1 e 6,25 ha, esse atributo apresenta a classe “INDICIO”, pois esses polígonos não entrarão no cálculo da taxa anual
+●	class_name: nome da classe específica atribuída à feição 
+○	No arquivo de polígonos residuais, esse atributo contém a classe “r2024”, e é referente aos polígonos que ocorreram no ano-Prodes anterior, mas que não foi detectado nas cenas utilizadas
+○	No arquivo de polígonos acima de 6,25 ha, esse atributo apresenta a classe “d2024”, e se refere aos polígonos de desmatamento detectados usando cenas no ano-Prodes indicado
+○	No arquivo de polígonos entre 1 e 6,25 ha, esse atributo apresenta a classe “INDICIO”, pois esses polígonos não entrarão no cálculo da taxa anual
+●	sub_class: classe com informação específica sobre a interpretação visual
+○	Os arquivos de polígonos residuais e de polígonos entre 1 e 6,25 ha não contém esse atributo
+○	No arquivo de polígonos acima de 6,25ha do bioma Amazônia, esse atributo apresenta a diferenciação entre desmatamento por “corte raso com solo exposto”, “corte raso com vegetação”, “degradação progressiva”, “mineração”, “floresta inundada” ou “reservatorio”
+●	def_cloud: Ano que indica desde quando esta área está coberta por nuvens. Fazendo a diferença do ano corrente onde se detectou o desmatamento e def_cloud, temos o número de anos coberto por nuvens.
+●	julian_day: dia juliano
+●	image_date: data da cena usada para obter a feição
+●	year: ano do desmatamento, usado para facilitar as consultas ao banco de dados
+●	area_km: área calculada para a feição em km²
+●	scene_id: identificador da cena no banco de dados, usado para consultas
+●	publish_year: usado para permitir a publicação do dado no GeoServer com dimensão temporal
+●	source: origem do polígono (amazonia, cerrado ou pantanal), caso o polígono tenha sido incorporado de outro projeto, por exemplo, devido à alteração do mapa de biomas ou ainda às zonas da Amazônia Legal no Cerrado e Pantanal
+●	satellite: nome do satélite. Em geral será o Landsat mas em alguns casos, outro satélites podem ser utilizados
+●	sensor: nome do sensor que registrou a imagem
+●	geom: indica se a feição é composta por um ou mais polígonos
+
+Aquisição via Portal TerraBrasilis
+
+Esses dados são liberados quando ainda não se completou o ano-PRODES corrente. Por exemplo, ao final de 2024 disponibiliza-se os dados de incremento parcial do ano-PRODES 2024, que teve início em agosto de 2024 terá o fim em julho de 2025.
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre a aba Amazônia Legal – PRODES (Desmatamento) e selecione a opção Incremento Anual do Desmatamento - Shapefile (cenas prioritárias):
+
+ 
+
+Efetuar a aquisição clicando na opção Download.
+
+	
+	
+	
+	
+Dados Completos em Formato Matricial 	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “PRODES completo em formato matricial – Geotiff” para a Amazônia Legal e os biomas Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal, disponibilizado na plataforma TerraBrasilis.
+Os polígonos das áreas florestais da Amazônia Legal contêm áreas desmatadas maiores que 6,25 ha. Para Mata Atlântica, Pampa, Caatinga, Pantanal e Cerrado, foram mapeados os polígonos com área mínima de 1 ha. Este dado inclui também as áreas de hidrografia, não floresta (primeira versão), não floresta 2 (revisão da primeira versão), polígonos de desmatamento residuais (a partir de 2010), áreas de nuvem para o último período de levantamento, e floresta remanescente (composta por todos os demais pixels). Possui escala de 1:250.000, sistema de coordenadas SIRGAS 2000 (EPSG:4674) e frequência de atualização anual.
+
+O arquivo em formato texto (.txt) contém a área total de cada classe, de acordo com a organização abaixo:
+●	As classes de 0 a 23 correspondem aos anos de desmatamento de 2000 a 2023, seguindo a ordem dos anos;
+●	Classes de 50-63 correspondem aos resíduos de desmatamento de 2010 a 2023, seguindo a ordem dos anos;
+●	Classe 91 representa hidrografia;
+●	Classe 99 representa nuvem;
+●	Classe 100 representa áreas de vegetação nativa;
+●	Classe 101 representa áreas de não floresta
+
+O arquivo .qml contém a legenda para as classes, compatível com o software QGIS.
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre o recorte territorial de interesse seguido por – PRODES (Desmatamento) e selecione a opção Dados Completos em Formato Matricial:
+ 
+
+Efetuar a aquisição clicando na opção Download.
+Ao abrir o arquivo matricial no QGIS e clicar em qualquer um dos pixels, as informações da feição aparecem conforme a figura abaixo:
+ 
+
+Para acessar os campos citados na descrição acima, é necessário clicar na camada com o botão direito, clicar na opção Criar tabelas de atributo do raster → Gerenciado pelo provedor dos dados. Assim, o atributo “Class” é adicionado no grupo de feições dos pixels: 
+
+ 
+
+O atributo “Class” é separado em:
+●	 áreas de desmatamento, nomeados pela letra “d” seguido do ano de ocorrência (“dXXXX”). Até 2007 alguns anos apresentam dados agregados,
+●	áreas residuais, nomeados pela letra “r” seguido do ano de ocorrência (“rXXXX”),
+●	hidrografia,
+●	nuvens,
+●	vegetação nativa,
+●	não floresta
+	
+	
+	
+	
+	
+Dados Completos em Formato Vetorial 	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “PRODES completo em formato vetorial - GeoPackage” para a Amazônia Legal e os biomas Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal, disponibilizado na plataforma TerraBrasilis.
+Arquivo único e em formato GeoPackage contendo as seguintes classes: desmatamento acumulado, incrementos anuais no desmatamento, hidrografia e resíduo. Para alguns biomas, contém também mapeamento de reservatório, áreas de não floresta e nuvem.
+
+Os campos presentes nos arquivos de Desmatamento Acumulado, Incremento Anual, Hidrografia, Resíduos de Desmatamento, e Não Floresta são:
+●	uuid: identificador único universal de cada feição;
+●	uid: identificador para rastreabilidade da feição na origem/produção do dado
+●	geom: feição composta por um ou mais polígonos - geometria obtida por interpretação visual de imagem de satélite.
+●	State: estado/unidade da federação;
+●	Source: nome da origem do polígono (amazonia, cerrado, caatinga, mata_atlantica, pampa, pantanal), caso o polígono tenha sido incorporado de outro projeto, por exemplo, devido à alteração do mapa de biomas ou ainda às zonas da Amazônia Legal no Cerrado e Pantanal
+●	path_row: código da cena formado por linha/coluna da grade de passagem do satélite Landsat;
+●	path_row: código da cena formado por linha/coluna da grade de passagem do satélite Landsat
+●	main_class: nome da classe principal atribuída à feição ("DESMATAMENTO"; "HIDROGRAFIA"; "RESIDUO"; "NAO_FLORESTA");
+●	class_name: nome da classe específica atribuída à feição ("dYYYY" onde d= desmatamento e YYYY=ano com 4 dígitos a partir de 2008; "HIDROGRAFIA"; "rYYYY" onde r é residual e YYYY=ano com 4 dígitos a partir de 2010; "NAO_FLORESTA" e "NAO_FLORESTA2");
+●	sub_class: informação detalhada da classe;
+●	satellite: nome do satélite. Em geral será o Landsat e Sentinel, mas em alguns casos, outros satélites podem ser utilizados.
+●	sensor - texto - nome do sensor que obteve a imagem.
+●	def_cloud: Ano que indica desde quando esta área está coberta por nuvens. Fazendo a diferença do ano corrente onde se detectou o desmatamento e def_cloud, temos o número de anos coberto por nuvens. Preenchido quando aplicável;
+●	state: nome do estado, unidade da federação, quando aplicável.
+●	julian_day: dia juliano;
+●	image_date: data da cena usada para obter a feição;
+●	year: ano da feição, usado para facilitar as consultas ao banco de dados
+●	area_km: área calculada para a feição em km²
+●	scene_id: identificador da cena no banco de dados, usado para consultas (Não se aplica ao bioma Pampa)
+●	publish_year: usado para permitir a publicação do dado no GeoServer com dimensão temporal (quando aplicável)
+●	source: origem do polígono (amazonia, cerrado, caatinga, mata_atlantica, pampa, pantanal), caso o polígono tenha sido incorporado de outro projeto, por exemplo, devido à alteração do mapa de biomas ou ainda às zonas da Amazônia Legal no Cerrado e Pantanal. Preenchido quando aplicável;
+
+Os arquivos têm especificidades por recorte de biomas:
+●	Amazônia Legal: 
+○	Desmatamento Acumulado: Área total desmatada, medida até 2007. O mapeamento utiliza imagens do satélite Landsat ou similares, para registrar e quantificar as áreas desmatadas maiores que 6,25 hectares. 
+○	Incremento Anual: Áreas desmatadas a partir de 2008, discretizadas por ano. O mapeamento utiliza imagens do satélite Landsat ou similares, para registrar e quantificar as áreas desmatadas maiores que 6,25 hectares. 
+●	Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal:
+○	Desmatamento Acumulado: Acúmulo de desmatamento do PRODES Caatinga até 2000. 
+●	Caatinga, Mata Atlântica e Pampa:
+○	Incremento Anual: Área desmatada a partir de 2004 discretizadas por ano.
+●	Cerrado e Pantanal: 
+○	Incremento Anual: Área desmatada a partir de 2002 discretizadas por ano.
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre o recorte territorial de interesse seguido por – PRODES (Desmatamento) e selecione a opção PRODES completo em formato vetorial - GeoPackage:
+
+ 
+
+Efetuar a aquisição clicando na opção Download.
+
+	
+	
+	
+	
+Resíduo Anual na Supressão da Vegetação Nativa	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “Resíduo anual na supressão da vegetação nativa - Shapefile” para a Amazônia Legal e os biomas Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal, disponibilizado na plataforma TerraBrasilis. 
+Esse conjunto de dados apresenta a revisão nos levantamentos de anos anteriores ao ano corrente de mapeamento, resultando em áreas de resíduo de desmatamento. O mapeamento utiliza imagens do satélite para registrar e quantificar as áreas desmatadas a partir de 1 ha para os biomas Cerrado, Caatinga, Mata Atlântica, Pampa e Pantanal e a partir de 6,25 ha para a Amazônia Legal. Possui sistema de coordenadas EPSG:4674 e frequência de atualização anual. Neste arquivo não há diferenciação entre desmatamento / supressão por corte raso e degradação florestal.
+
+O arquivo vetorial contém os seguintes campos:
+
+●	uuid - uuid - identificador único universal de cada feição
+●	uid - número inteiro - identificador numérico usado na exportação do dado para arquivos;
+●	state - texto - estado/unidade da federação
+●	path_row - texto - código da cena formado por linha/coluna da grade de passagem do satélite Landsat
+●	main_class - texto - nome da classe principal atribuída à feição
+●	class_name - texto - nome da classe específica atribuída à feição (Ex.: Resíduo em 2020 = "r2020")
+●	def_cloud - número - Ano que indica desde quando esta área está coberta por nuvens. Fazendo a diferença do ano corrente onde se detectou o desmatamento e def_cloud, temos o número de anos coberto por nuvens. Preenchido quando aplicável.
+●	julian_day - número - dia juliano
+●	image_date - texto - data da cena usada para obter a feição.
+●	year - número - ano do desmatamento, usado para facilitar as consultas ao banco de dados
+●	area_km - número - área calculada para a feição em km²
+●	scene_id - número - identificador da cena no banco de dados, usado para consultas
+●	publish_year - data - usado para permitir a publicação do dado no GeoServer com dimensão temporal.
+●	source - texto - origem do polígono (amazonia, cerrado, caatinga, mata_atlantica, pampa, pantanal), caso o polígono tenha sido incorporado de outro projeto, por exemplo, devido à alteração do mapa de biomas ou ainda às zonas da amazônia legal no cerrado e pantanal.
+●	satellite - texto - nome do satélite. Em geral será o landsat mas em alguns casos, outro satélites podem ser utilizados.
+●	sensor - texto - nome do sensor que obteve a imagem.
+●	geom - feição composta por um ou mais polígonos - geometria obtida por interpretação visual de imagem de satélite.
+
+Os dados de incremento anual de desmatamento possuem especificações dependendo do bioma, são elas:
+●	Amazônia Legal: O mapeamento utiliza imagens do satélite Landsat ou similares, para registrar e quantificar as áreas desmatadas maiores ou iguais a 6,25 hectares.
+●	Caatinga, Cerrado, Mata Atlântica, Pampa e Pantanal: Foi construído a partir da interpretação visual de imagens Landsat-8/OLI na composição R(5)G(6)B(4) - com resolução de 30m - e em escala de trabalho de 1:75.000. A área mínima mapeada é de um hectare (1 ha). O produto é compatível com a escala final de 1:250.000.
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre o recorte territorial de interesse seguido por – PRODES (Desmatamento) e selecione a opção Resíduo Anual na Supressão da Vegetação Nativa:
+
+ 
+
+Efetuar a aquisição clicando na opção Download.
+	
+	
+	
+Desmatamento no Brasil em Formato Matricial	
+Descrição
+
+A descrição a seguir se refere ao arquivo denominado “Desmatamento no Brasil em formato matricial - Geotiff” para o Brasil, disponibilizado na plataforma TerraBrasilis. 
+Este arquivo unifica os dados de incremento anual por biomas, disponibilizando o mapeamento do desmatamento para todo o Brasil, no formato matricial (raster). Eventualmente, os arquivos nos recortes por bioma, podem receber atualizações antes do mosaico Brasil, pois os dados por bioma possuem calendários de publicação independentes. O Sistema de Referência Geográfica é SIRGAS 2000 (EPSG:4674).
+O arquivo ZIP inclui a legenda em formato ".qml", compatível com o QGIS.
+
+O arquivo matricial contém as seguintes classes: 
+●	dYYYY (desmatamento no ano YYYY. Ex.: d2021)
+●	rYYYY (resíduo no ano YYYY. Ex.: r2020)
+●	Hidrografia
+●	Não floresta (Informação para a Amazônia Legal)
+●	Vegetação Natural/Floresta (Todos os demais pixels não classificados)
+
+Aquisição via TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre o recorte territorial de interesse seguido por Brasil – PRODES (Desmatamento) e selecione a opção Desmatamento no Brasil em Formato Matricial:
+
+ 
+
+Efetuar a aquisição clicando na opção Download.
+	
+	
+Processamento
+Desagregação dos arquivos matriciais a nível subnacional	Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Desagregação dos arquivos matriciais para o nível subnacional, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+
+Desagregação dos arquivos vetoriais a nível subnacional	Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Desagregação dos arquivos vetoriais a nível subnacional, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Seleção por ano-Prodes	 Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Seleção por ano-Prodes, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP. 
+Seleção por tipo de desmatamento 	Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Seleção por tipo de desmatamento, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Seleção por ano-Prodes & tipo de desmatamento	Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Seleção por ano-Prodes & tipo de desmatamento, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Cálculo da área 	 Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Cálculo da área, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Limpeza, Padronização e Exportação dos Arquivos Vetoriais	Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Limpeza, padronização e exportação dos arquivos vetoriais, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+ 
+3	Deter
+
+O DETER (Sistema de Detecção de Desmatamento em Tempo Real), implementado em 2004, é um sistema desenvolvido para apoiar ações de fiscalização ambiental, permitindo a identificação rápida da supressão e degradação florestal na Amazônia Legal Brasileira e de áreas com perda de vegetação primária nas formações savânicas e florestais do bioma Cerrado. O sistema gera, diariamente, avisos (ou alertas) de alteração na vegetação para áreas iguais ou superiores a 3 hectares, abrangendo tanto áreas de desmatamento total, como corte raso, mineração e desmatamento com vegetação, quanto áreas em processo de degradação florestal, incluindo exploração madeireira, queimadas e outros processos. Esses avisos são disponibilizados por meio de uma infraestrutura de serviços geográficos na web, permitindo o acesso por órgãos de fiscalização como o Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renováveis (IBAMA) e as Secretarias Estaduais de Meio Ambiente, sendo utilizados para o planejamento e a execução de ações fiscalizatórias. Além disso, os dados gerados pelo sistema estão disponíveis ao público no portal TerraBrasilis.
+Inicialmente, o DETER utilizava imagens do sensor MODIS, a bordo do satélite TERRA/NASA, e do sensor WFI, presente no satélite brasileiro CBERS-2B/INPE. Esses sensores, com resolução espacial de 250 metros, possibilitavam a detecção de desmatamentos a partir de uma área mínima de 25 hectares, sem distinção entre desmatamento e degradação florestal. A partir de 2015, a metodologia foi aprimorada, passando a contar com imagens do sensor WFI embarcado nos satélites CBERS-4, CBERS-4A e Amazônia-1/INPE. Com resolução espacial entre 56 e 64 metros, essas imagens permitiram a diferenciação entre os processos de desmatamento e degradação, além da redução da área mínima detectável para 3 hectares, tornando o sistema mais eficiente no monitoramento ambiental.
+
+3.1 - Amazônia Legal
+POP 3.1 - Descrição, aquisição e processamento dos dados do sistema Deter para a Amazônia Legal
+
+Procedimento Operacional Padrão 3.1
+Amazônia Legal
+Descrição, aquisição e processamento dos dados do sistema Deter
+Objetivo	Fornecer a descrição, os procedimentos para aquisição e as etapas para o processamento dos produtos disponibilizados pelo sistema Deter sobre os avisos de alteração na vegetação, indicando áreas desmatadas ou em processo de degradação florestal na Amazônia Legal
+Produtos	Ao executar esse POP, o usuário adquirirá os seguintes produtos:
+
+●	Avisos de desmatamento / supressão da vegetação nativa
+○	Arquivo vetorial com as áreas de desmatamento/supressão de vegetação nativa na Amazônia Legal. 
+
+Após o processamento, o usuário poderá adquirir os seguintes produtos:
+●	Arquivo vetorial da desagregação dos dados Deter ao nível subnacional;
+●	Arquivo vetorial da desagregação dos dados Deter ao nível subnacional com apenas os anos selecionados;
+●	Arquivo vetorial da desagregação dos dados Deter ao nível subnacional com apenas os tipos de avisos selecionados;
+●	Resultado do cálculo métrico da área de supressão e/ou desmatamento após filtragem dos dados.
+
+
+Descrições e Aquisições
+Avisos de supressão e degradação em áreas de Não Floresta - Amazônia Legal	
+Descrição
+
+O arquivo vetorial com os avisos de alteração na cobertura vegetal nas áreas de não floresta da Amazônia Legal abrange dados a partir de agosto de 2023. O mapeamento é realizado com imagens provenientes dos satélites Amazônia-1, CBERS-4 ou similares, sendo utilizado para registrar e quantificar as áreas identificadas pelo sistema Deter em regiões classificadas como Não Floresta.
+
+O uso e cobertura da terra foram classificados nas seguintes categorias de desmatamento:
+
+●	Supressão com solo exposto: é a remoção total da cobertura florestal, independentemente do uso destinado para a área.
+●	Supressão com vegetação: são áreas em que há evidência de supressão, mas a área se encontra com sinais de uma cobertura vegetal. São casos em que há um lapso de tempo entre a ocorrência do corte e a sua detecção, ocasionado pela cobertura de nuvens entre um evento e outro, ou o resultado final da degradação recursiva.
+●	Mineração: desmatamento causado por atividade de extração mineral. Predomina nesta classe atividades de garimpo artesanal.
+
+As áreas com degradação florestal foram classificadas como “Cicatriz de queimada”, caracterizada pela presença de áreas atingidas por fogo, podendo ou não haver vegetação.
+
+O arquivo vetorial contém os seguintes campos:
+
+●	fid: código de identificação seguido de dígito verificador que indica: ("_curr" tabela corrente e "_hist" tabela de histórico)
+●	class_name: Nome das classes atribuídas aos avisos;
+●	area_km: Área do aviso em quilômetros quadrados km²;
+●	view_date: Data das imagens usadas na identificação do aviso;
+●	create_date: Data da criação do aviso no banco de dados do projeto;
+●	audit_date: Data da auditoria realizada no aviso;
+●	sensor: Nome do sensor embarcado no satélite, usado na obtenção da imagem;
+●	satellite: Nome do satélite que obteve a imagem;
+●	path_row: Path e Row (órbita ponto) das imagens usadas na identificação do aviso;
+●	uuid: Identificação única para o aviso;
+
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre a opção “Amazônia Legal” - DETER (Avisos)”  e selecione a opção Avisos em Áreas de Não Floresta: 
+ 
+
+Efetuar a aquisição clicando na opção Download.
+	
+	
+Avisos de supressão e degradação em áreas de Floresta - Amazônia Legal	Descrição
+
+O arquivo vetorial com os avisos de área de degradação e desmatamento em áreas de floresta da Amazônia Legal abrange dados a partir de Agosto de 2016. O mapeamento utiliza imagens dos satélites Amazônia-1, CBERS-4 ou similares, para registrar e quantificar as áreas de avisos produzidas pelo sistema Deter.
+
+O uso e cobertura da terra foram classificados nas seguintes categorias de desmatamento:
+
+●	Desmatamento: é a remoção total da cobertura florestal, independentemente do uso destinado para a área desmatada. O processo do desmatamento pode se dar por corte raso, quando a cobertura florestal é abruptamente removida em uma única intervenção, ou pode ser o resultado de eventos de degradação sucessiva que levam ao colapso completo da estrutura florestal da vegetação.
+●	Desmatamento com vegetação: são áreas em que há evidência de desmatamento, mas a área desmatada se encontra com sinais de uma cobertura vegetal. São casos em que há um lapso de tempo entre a ocorrência do corte raso e a sua detecção, ocasionado pela cobertura de nuvens entre um evento e outro, ou o resultado final da degradação recursiva.
+●	Mineração: desmatamento causado por atividade de extração mineral. Predomina nesta classe atividades de garimpo artesanal.
+
+As áreas com degradação florestal foram classificadas nas seguintes categorias:
+
+●	Cicatriz de incêndio florestal: é caracterizada pela presença de áreas atingidas por fogo, podendo ou não haver vegetação arbórea.
+●	Degradação: é caracterizada pela perda de dossel florestal e consequente exposição do solo, onde há vegetação geralmente de indivíduos arbóreos em estágios iniciais e intermediário inicial de sucessão.
+
+Além do desmatamento e degradação florestal, também foram classificadas áreas de exploração madeireira, categorizadas como: 
+
+●	Corte seletivo tipo 1: é considerado uma exploração convencional, onde os indivíduos arbóreos de interesse comercial são removidos sem planejamento prévio, denotado pela forma desordenada de estradas e ramais no interior da floresta e com a presença de pátios de estocagem com dimensões irregulares e dispostos de forma aleatória.
+●	Corte seletivo tipo 2: é considerado uma exploração baseada em um plano de manejo, em que se percebe o planejamento prévio, evidenciado pelo padrão regular entre as estradas e pátios de estocagem no interior da floresta.
+
+
+O arquivo vetorial contém os seguintes campos:
+
+●	fid: código de identificação seguido de dígito verificador que indica: ("_curr" tabela corrente e "_hist" tabela de histórico)
+●	classname: nome das classes atribuídas aos avisos, podendo ser: para degradação: 'CICATRIZ_DE_QUEIMADA', 'CS_DESORDENADO', 'CS_GEOMETRICO', 'DEGRADACAO'; e para desmatamento: 'DESMATAMENTO_CR', 'DESMATAMENTO_VEG', 'MINERACAO';
+●	quadrant: Atualmente fora de uso para as imagens CBERS. No passado foi utilizada como parte da informação das imagens AWFI;
+●	path_row: Path e Row (órbita ponto) das imagens usadas na identificação do aviso;
+●	view_date: Data das imagens usadas na identificação do aviso;
+●	sensor: Nome do sensor embarcado no satélite, usado na obtenção da imagem;
+●	satellite: Nome do satélite que obteve a imagem;
+●	areauckm: Área do aviso ou porção dele que intercepta uma unidade de conservação;
+●	uc: Nome da unidade de conservação interceptada pelo aviso;
+●	areamunkm: Área do aviso ou porção dele que intercepta um município. Use esta coluna em operações de soma de área;
+●	municipality: Nome do município interceptado pelo aviso ou porção dele;
+●	geocodibge: Código do município proveniente do dado do IBGE;
+●	uf: Nome da Unidade da Federação na qual o aviso ou porção dele está localizado;
+●	areatotkm: Área calculada antes da fragmentação por intersecção. Não deve ser somada. Usada apenas para finalidade de filtro pela área original do aviso e disponível apenas no arquivo shapefile da área de downloads para usuários cadastrados;
+●	publish_month: Indicador temporal mensal. Usada apenas para fins de configuração da dimensão temporal no GeoServer, e não disponível no shapefile da área de download;
+
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre a opção “Amazônia Legal” - DETER (Avisos)” e selecione a opção Avisos na Amazônia Legal:
+
+ 
+
+Efetuar a aquisição clicando na opção Download.
+
+
+	
+	
+	
+	
+Processamento
+Desagregação dos arquivos vetoriais a nível subnacional	Para desagregar os dados do Deter ao limite subnacional, é necessário criar o índice espacial para ambas as camadas vetoriais que serão utilizadas. Clique com o botão direito do mouse na camada, selecione Propriedades → Fonte → Criar Índice Espacial.
+Com a camada vetorial do Deter selecionada, clique em Vetor → Geoprocessamento → Recortar. Ao selecionar o limite subnacional como Camada de Sobreposição, conferir se ambas estão no mesmo SRC e em seguida clicar em Executar.
+O procedimento resultará na criação de uma nova camada temporária denominada “Recortado(a)”, que pode ser salva e renomeada clicando no botão direito do mouse e selecionando Tornar Permanente.
+Seleção dos avisos por ano-Prodes 	Para selecionar as detecções do Deter que ocorreram em um determinado período temporal, acesse a tabela de atributos do arquivo vetorial. Como os dados Deter são disponibilizados com a data completa (DD/MM/AAAA), para selecionar um período temporal, deve-se usar a Ferramenta de Consulta (também chamada de Query), que é acessado clicando com botão direito do mouse na camada, depois em Propriedades → Fonte:
+ 
+Para filtrar os dados, preencha a seguinte expressão na caixa Forneça expressão específica de filtragem:
+
+"VIEW_DATE">='2016/08/02' AND "VIEW_DATE"<='2017/12/31'
+
+Nesta expressão:
+●	VIEW_DATE corresponde ao campo que armazena as datas das feições
+●	O operador >= indica que o intervalo se inicia a partir de 02/08/2016, incluindo essa data
+●	AND assegura que as feições selecionadas atendam simultaneamente às duas condições estabelecidas
+●	O operador <= define que a seleção incluirá todas as feições até 31/12/2017, considerando essa data no intervalo
+
+ 
+Confirme a operação clicando em OK. A tabela exibirá apenas os dados que correspondem ao intervalo selecionado. Esse procedimento aplica um filtro temporário, sem modificar os dados originais da camada, garantindo que todas as informações sejam preservadas.
+Caso seja necessário criar uma camada contendo exclusivamente os dados filtrados, salve-a com um novo nome. Dessa forma, o novo arquivo armazenará apenas os registros correspondentes ao intervalo definido, sem alterar a camada original.
+ 
+	
+	
+Seleção dos avisos por tipo 	Os dados do Deter da Amazônia Legal (área de Floresta e Não Floresta) e Pantanal apresentam diferenciação do tipo de degradação ou supressão. Para selecionar algum tipo específico, acesse a tabela de atributos do arquivo vetorial. Os tipos de desmatamento/supressão são apresentados no campo “CLASS_NAME” e podem ser encontrados visualmente ou através da ferramenta Selecionar/filtrar feições usando forma, identificado a seguir:
+ 
+
+O tipo de desmatamento/supressão deve ser preenchido na caixa de busca do atributo “CLASS_NAME” e a opção Igual a (=) deve ser selecionada, seguido do comando Selecionar Feições. Para selecionar mais de um tipo, clique novamente na ferramenta Selecionar/Filtrar feições usando forma, digite o outro tipo de desmatamento/supressão e selecione o comando Adicionar à Seleção Atual, localizado abaixo de Selecionar Feições. Para selecionar múltiplos tipos de desmatamento/supressão, o procedimento mais eficiente é através da Ferramenta de Consulta (também chamada de Query), que é acessado clicando com botão direito do mouse na camada, depois em Propriedades → Fonte:
+
+ 
+
+Na lista de campos da Ferramenta de Consulta, dê duplo-clique no campo “CLASS_NAME” (no arquivo Amazônia Legal área Floresta é somente “CLASSNAME”) e ele assim será inserido na caixa de Forneça expressão específica de filtragem entre aspas. Para visualizar todos os valores (os tipos de desmatamento/supressão) desse campo, mantenha ele selecionado, clique em Tudo e todos os valores em “CLASSE_NAME” serão listados. Selecione o operador “=”, dê duplo clique no valor que corresponde ao tipo de desmatamento/supressão de interesse e coloque-o entre apóstrofes (‘). Selecione o operador “OR” e dê duplo clique no valor que corresponde ao próximo tipo de desmatamento/supressão de interesse e coloque-o entre apóstrofes (‘) se isso não for feito automaticamente. Repita esse processo até chegar no último tipo de interesse: 
+
+ 
+
+Confirme o procedimento clicando em OK e a tabela mostrará somente os dados dos tipos de desmatamento/supressão selecionados. Com esse procedimento, os dados originais da camada não são modificados, eles são apenas filtrados, então eles são mantidos. Para obter uma camada somente com os dados filtrados, salve-a com um outro nome e ela conterá somente os anos filtrados.
+
+	
+	
+Seleção dos avisos por ano-Prodes e por tipo de degradação	Para fazer a seleção de um período temporal específico e também de tipos de degradação de uma vez, o procedimento mais eficiente é através da Ferramenta de Consulta (também chamada de Query), que é acessado clicando com botão direito do mouse na camada, depois em Propriedades → Fonte:
+ 
+
+Para aplicar o filtro desejado, utilizaremos a seguinte expressão para exemplificar sua estrutura, na qual deve ser escrita na caixa Forneça expressão específica de filtragem. O exemplo seleciona avisos entre 2016 e 2017 e que foram identificados como cicatriz de queimada ou degradação:
+
+ ("VIEW_DATE" >= '2016-08-02' AND "VIEW_DATE" <= '2017-12-31') AND 
+("CLASSNAME" = 'CICATRIZ_DE_QUEIMADA' OR "CLASSNAME" = 'DEGRADACAO')
+
+Nesta expressão:
+
+●	"VIEW_DATE" >= '2016-08-02' define o início do intervalo, incluindo a data 02/08/2016.
+●	"VIEW_DATE" <= '2017-12-31' determina o final do intervalo, incluindo a data 31/12/2017.
+●	AND assegura que as feições selecionadas atendam simultaneamente às condições de data e de classe.
+●	"CLASSNAME" = 'CICATRIZ_DE_QUEIMADA' OR "CLASSNAME" = 'DEGRADACAO' filtra apenas as feições classificadas como Cicatriz de Queimada ou Degradação
+
+ 
+Confirme o procedimento clicando em OK e a tabela mostrará somente as feições com os anos e tipos de desmatamento/supressão selecionados. Com esse procedimento, os dados originais da camada não são modificados, eles são apenas filtrados, então eles são mantidos. Para obter uma camada somente com os dados filtrados, salve-a com um outro nome e ela conterá somente os anos filtrados.
+
+	
+	
+Cálculo da área	 Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Cálculo da área, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Limpeza, Padronização e Exportação dos arquivos	Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Limpeza, padronização e exportação dos arquivos vetoriais, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+
+
+
+3.2 - Biomas Cerrado e Pantanal
+POP 3.2 - Descrição, aquisição e processamento dos dados do sistema Deter para os biomas Cerrado e Pantanal
+
+Procedimento Operacional Padrão 3.2
+Biomas Cerrado e Pantanal
+Descrição, aquisição e processamento dos dados do sistema Deter
+Objetivo	Fornecer a descrição, os procedimentos para aquisição e as etapas para o processamento dos produtos disponibilizados pelo sistema Deter sobre os avisos de alteração na vegetação, indicando áreas desmatadas ou em processo de degradação florestal nos biomas Cerrado e Pantanal
+Produtos	Ao executar esse POP, o usuário adquirirá os seguintes produtos:
+
+●	Avisos de desmatamento / supressão da vegetação nativa
+○	Arquivo vetorial com as áreas de desmatamento/supressão de vegetação nativa nos biomas Cerrado e Pantanal. 
+
+Após o processamento, o usuário poderá adquirir os seguintes produtos:
+●	Arquivo vetorial da desagregação dos dados Deter ao nível subnacional;
+●	Arquivo vetorial da desagregação dos dados Deter ao nível subnacional com apenas os anos selecionados;
+●	Arquivo vetorial da desagregação dos dados Deter ao nível subnacional com apenas os tipos de avisos selecionados;
+●	Resultado do cálculo métrico da área de supressão e/ou desmatamento após filtragem dos dados.
+
+
+Descrições e Aquisições
+Avisos de desmatamento - Cerrado	Descrição
+
+O arquivo vetorial com os avisos de área de desmatamento / supressão da vegetação nativa no Cerrado abrange dados a partir de 2018. O mapeamento utiliza imagens dos satélites Amazônia-1, CBERS-4 ou similares, ou similares, para registrar e quantificar as áreas de avisos de desmatamento com solo exposto, desmatamento com vegetação e mineração.
+
+Os avisos são classificados como “Desmatamento”, que se refere a áreas onde ocorreu a remoção total da cobertura de vegetação nativa, independentemente do uso destinado para a área.
+
+O arquivo vetorial contém os seguintes campos:
+
+●	fid: código de identificação seguido de digito verificador que indica: ("_curr" tabela corrente e "_hist" tabela de histórico)
+●	classname: Nome da classe atribuída aos avisos: ('DESMATAMENTO_CR');
+●	quadrant: Atualmente fora de uso para as imagens CBERS. No passado foi utilizada como parte da informação das imagens AWFI;
+●	path_row: Path e Row (órbita ponto) das imagens usadas na identificação do aviso;
+●	view_date: Data das imagens usadas na identificação do aviso;
+●	sensor: Nome do sensor embarcado no satélite, usado na obtenção da imagem;
+●	satellite: Nome do satélite que obteve a imagem;
+●	areauckm: Área do aviso ou porção dele que intercepta uma unidade de conservação;
+●	uc: Nome da unidade de conservação interceptada pelo aviso;
+●	areamunkm: Área do aviso ou porção dele que intercepta um município. Use esta coluna em operações de soma de área;
+●	municipality: Nome do município interceptado pelo aviso ou porção dele;
+●	geocodibge: Identificador de município proveniente do dado do IBGE usado para identificação inequívoca do município;
+●	uf: Nome da Unidade da Federação na qual o aviso ou porção dele está localizado;
+●	areatotkm: Área calculada antes da fragmentação por intersecção. Não deve ser somada. Usada apenas para finalidade de filtro pela área original do aviso e disponível apenas no arquivo shapefile da área de downloads para usuários cadastrados;
+●	publish_month: Indicador temporal mensal. Usada apenas para fins de configuração da dimensão temporal no GeoServer, e não disponível no shapefile da área de download;
+
+
+Aquisição via Portal TerraBrasilis
+
+●	Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre Bioma Cerrado - Deter (Avisos) e depois Avisos no Bioma Cerrado na lista de opções: 
+
+ 
+
+Efetuar a aquisição clicando na opção Download.
+
+	
+	
+	
+Avisos de supressão e degradação vegetal - Pantanal	Descrição
+
+O arquivo vetorial dos avisos de alterações na cobertura vegetal no bioma Pantanal abrange dados a partir de agosto de 2023. O mapeamento utiliza imagens do satélite Amazonia1, CBERS4 ou similares, para registrar e quantificar as áreas de avisos produzidas no sistema Deter. 
+
+O uso e cobertura da terra foram classificados nas seguintes categorias de desmatamento:
+
+●	Supressão com solo exposto: é a remoção total da cobertura florestal, independentemente do uso destinado para a área.
+●	Supressão com vegetação: são áreas em que há evidência de supressão, mas a área se encontra com sinais de uma cobertura vegetal. São casos em que há um lapso de tempo entre a ocorrência do corte e a sua detecção, ocasionado pela cobertura de nuvens entre um evento e outro, ou o resultado final da degradação recursiva.
+●	Mineração: desmatamento causado por atividade de extração mineral. Predomina nesta classe atividades de garimpo artesanal.
+
+As áreas com degradação florestal foram classificadas como “Cicatriz de queimada”, caracterizada pela presença de áreas atingidas por fogo, podendo ou não haver vegetação.
+
+O arquivo vetorial contém os seguintes campos:
+
+●	fid: código de identificação seguido de dígito verificador que indica: ("_curr" tabela corrente e "_hist" tabela de histórico)
+●	class_name: Nome das classes atribuídas aos avisos;
+●	area_km: Área do aviso em quilômetros quadrados km²;
+●	view_date: Data das imagens usadas na identificação do aviso;
+●	create_date: Data da criação do aviso no banco de dados do projeto;
+●	audit_date: Data da auditoria realizada no aviso;
+●	sensor: Nome do sensor embarcado no satélite, usado na obtenção da imagem;
+●	satellite: Nome do satélite que obteve a imagem;
+●	path_row: Path e Row (órbita ponto) das imagens usadas na identificação do aviso;
+●	uuid: Identificação única para o aviso;
+ 
+
+Aquisição via Portal TerraBrasilis
+
+Na página de Downloads do portal TerraBrasilis <https://terrabrasilis.dpi.inpe.br/downloads/>, encontre Bioma Pantanal - Deter (Avisos) e depois Avisos na supressão vegetal na lista de opções: 
+
+ 
+
+
+
+Efetuar a aquisição clicando na opção Download.
+
+	
+	
+Processamento
+Desagregação dos arquivos vetoriais a nível subnacional	Adotar o mesmo procedimento descrito no POP 3.1 para a Amazônia Legal, na etapa de Desagregação dos arquivos vetoriais a nível subnacional, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Seleção dos avisos por ano-Prodes 	Adotar o mesmo procedimento descrito no POP 3.1 para a Amazônia Legal, na etapa de Seleção dos avisos por ano-Prodes, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Seleção dos avisos por tipo 	Adotar o mesmo procedimento descrito no POP 3.1 para a Amazônia Legal, na etapa de Seleção dos avisos por tipo, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Seleção dos avisos por ano-Prodes e por tipo de degradação	Adotar o mesmo procedimento descrito no POP 3.1 para a Amazônia Legal, na etapa de Seleção dos avisos por ano-Prodes e por tipo de degradação, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Cálculo da área	Adotar o mesmo procedimento descrito no POP 3.1 para a Amazônia Legal, na etapa de Cálculo de área, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Limpeza, Padronização e Exportação dos arquivos	Adotar o mesmo procedimento descrito no POP 3.1 para a Amazônia Legal, na etapa de Limpeza, Padronização e Exportação dos arquivos, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+
+
+4	TerraClass
+
+O TerraClass é um sistema de mapeamento desenvolvido pelo Instituto Nacional de Pesquisas Espaciais (INPE) em parceria com a Empresa Brasileira de Pesquisa Agropecuária (Embrapa) para qualificar e monitorar bienalmente o desmatamento nos biomas Amazônia e Cerrado. O sistema utiliza dados do Projeto PRODES para identificar áreas desmatadas e, por meio de técnicas de sensoriamento remoto e geoprocessamento, classificar o uso e a cobertura dessas áreas. A base cartográfica inclui a malha digital estadual do IBGE (versão 2017), a malha oficial dos biomas brasileiros em escala 1:250.000 e os limites internacionais adotados pelo PRODES.
+Na Amazônia, o TerraClass tem sido utilizado para compreender a ocupação do território, fornecendo informações para políticas públicas e gestão ambiental. A parceria com o CENSIPAM tem permitido a continuidade das análises, aprimorando os métodos de mapeamento e a atualização da série histórica de dados. No Cerrado, o projeto está integrado ao FIP Paisagens Rurais, coordenado pelo Serviço Florestal Brasileiro (SFB) e pelo Ministério da Agricultura e Pecuária (MAPA), com financiamento do Banco Mundial e execução por instituições como GIZ, SENAR, INPE e Embrapa. O objetivo é incentivar práticas agrícolas sustentáveis e de baixo impacto ambiental, aliando monitoramento territorial e conservação dos recursos naturais.
+
+POP 4 - Descrição, aquisição e processamento dos dados do sistema TerraClass
+
+Procedimento Operacional Padrão 4
+TerraClass
+Objetivo	Fornecer a descrição, os procedimentos para aquisição e as etapas de processamento dos produtos disponibilizados pelo sistema TerraClass (INPE/EMBRAPA) sobre o uso e cobertura da terra.
+Recortes Regionais Disponibilizados	Os produtos do TerraClass são disponibilizados com os seguintes recortes geográficos:
+
+●	Biomas
+○	Amazônia
+○	Cerrado
+●	Unidades da Federação
+●	Municípios
+
+Os limites dos biomas brasileiros usados estão em conformidade com a alteração do IBGE de 30/10/2019.
+
+Produtos	Ao executar esse POP, o usuário adquirirá os seguintes produtos:
+
+●	Arquivo matricial com a desagregação do mapeamento do uso e cobertura da terra para o bioma de interesse e região de interesse em nível subnacional. 
+●	Arquivo vetorial com a desagregação do mapeamento do uso e cobertura da terra para o bioma de interesse e região de interesse em nível subnacional
+Descrições
+TerraClass Amazônia	
+Este produto apresenta o mapeamento das classes de uso e cobertura da terra no bioma Amazônia, para o período de 2008–2022, disponível bienalmente. 
+
+O Sistema de Referência Geográfica é SIRGAS 2000 (EPSG:4674).
+
+O mapeamento foi elaborado a partir das seguintes classes de uso e cobertura da terra:
+●	Vegetação Natural Florestal Primária
+●	Vegetação Natural Florestal Secundária
+●	Silvicultura
+●	Pastagem Arbustiva / Arbórea
+●	Pastagem Herbácea
+●	Cultura Agrícola Perene
+●	Cultura Agrícola Semiperene
+●	Cultura Agrícola Temporária de 1 Ciclo
+●	Cultura Agrícola Temporária de Mais de 1 Ciclo
+●	Mineração
+●	Urbanizada
+●	Desflorestamento no Ano
+●	Corpo D'água
+●	Não Floresta
+
+O arquivo matricial é acompanhado de um arquivo de extensão ".qml" com a legenda para as classes compatível com o software QGIS.
+
+
+	
+TerraClass Cerrado	Este produto apresenta o mapeamento das classes de uso e cobertura da terra no bioma Cerrado, para o período de 2018–2022, disponível bienalmente. 
+
+O Sistema de Referência Geográfica é SIRGAS 2000 (EPSG:4674).
+
+O mapeamento foi elaborado com as seguintes classes de uso e cobertura da terra:
+●	Vegetação Natural Primária
+●	Vegetação Natural Secundária
+●	Silvicultura
+●	Pastagem
+●	Cultura Agrícola Perene
+●	Cultura Agrícola Semiperene
+●	Cultura Agrícola Temporária de 1 Ciclo
+●	Cultura Agrícola Temporária de Mais de 1 Ciclo
+●	Mineração
+●	Urbanizada
+●	Outras Áreas Edificadas
+●	Outros Usos
+●	Não Observado
+●	Desflorestamento no Ano
+●	Corpo D'Água
+
+O arquivo matricial é acompanhado de um arquivo de extensão ".qml" com a legenda para as classes compatível com o software QGIS.
+	
+Aquisição
+TerraClass Amazônia e TerraClass Cerrado	Aquisição via website do Projeto TerraClass
+
+●	Acesse a página de Downloads do website do Projeto TerraClass <https://www.terraclass.gov.br/download-de-dados>.
+●	Para fazer o download dos dados para o bioma Amazônia ou bioma Cerrado, selecione a iniciativa referente ao bioma, o recorte Bioma e os anos de mapeamento de interesse. Para este recorte, há somente a opção de formato matricial.
+
+NOTA: O plugin DesagregaBiomasBR realiza o download automático dos arquivos ZIP do TerraClass, extração automática dos shapefiles, aplicação de estilos QML apropriados, e recorte espacial conforme necessário. 
+
+ 
+
+Clique em cada uma das opções encontradas para efetivar o download.
+Para fazer o download dos arquivos desagregados, na opção Selecione um recorte, selecione Unidades da Federação ou Municípios, na caixa Digite o nome do recorte, digite o nome da Unidade da Federação ou do Município e selecione os anos de mapeamento de interesse. Esses dados são disponibilizados no formato matricial e vetorial:
+
+ 
+
+Clique em cada uma das opções encontradas para efetivar o download:
+
+Processamento
+Desagregação dos arquivos matriciais a nível subnacional	Antes de executar a desagregação, é recomendado criar o índice espacial para a camada vetorial com o limite subnacional que será utilizado (consulte o POP 1 para obtenção do arquivo vetorial com os limites do estado de interesse). Clique com o botão direito do mouse na camada, selecione Propriedades → Fonte → Criar Índice Espacial.
+Para executar a desagregação, selecione a camada matricial, depois Raster → Extrair → Recortar raster pela camada de extensão e selecionar a camada vetorial com o limite subnacional, conferindo se ambas estão no mesmo SRC. Após a execução da operação, a simbologia padrão é definida como “Banda simples cinza”. Para carregar o estilo de simbologia padrão dos dados BiomasBR, clique com o botão direito do mouse na camada, selecione Propriedades → Simbologia. No canto inferior esquerdo, clicar em Estilo.
+Selecionar Carregar Estilo e selecionar o arquivo “.qml” que é baixado junto com o arquivo matricial. Selecionar Aplicar para que a operação seja concluída.
+	
+Cálculo da área	 Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Cálculo da área, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+Limpeza, Padronização e Exportação dos arquivos vetoriais	Adotar o mesmo procedimento descrito no POP 2.1 para o bioma Amazônia, na etapa de Limpeza, padronização e exportação dos arquivos vetoriais, utilizando, porém, os arquivos correspondentes aos recortes territoriais especificados neste POP.
+
+5	Área Queimada
+
+O sistema de monitoramento de Área Queimada do INPE fornece dados sobre áreas afetadas por fogo nos biomas brasileiros. Os dados são disponibilizados mensalmente e anualmente, permitindo análises temporais detalhadas dos padrões de queimadas.
+
+NOTA: Os dados de Área Queimada são acessíveis principalmente através do plugin DesagregaBiomasBR, que realiza o download direto dos arquivos ZIP do servidor do INPE, extração automática, merge de múltiplos meses (para dados anuais), e aplicação de recortes espaciais conforme necessário.
+
+6	Operação Extra
+POP 6 – Correção de geometrias inválidas
+Procedimento Operacional Padrão 6
+Operações Opcionais
+Correção de geometria inválida	Em alguns casos, a operação solicitada pode não ser concluída devido a erros de geometria presentes no arquivo. Esses erros podem ocorrer, por exemplo, quando há polígonos com vértices sobrepostos, geometrias duplicadas ou interseções incorretas que violam as regras topológicas. Quando isso acontece, a operação é interrompida, e um aviso aparece na janela da ferramenta indicando a presença de geometrias inválidas na camada vetorial. Esses problemas são comuns em arquivos geoespaciais complexos e podem ser corrigidos utilizando ferramentas específicas, como Corrigir Geometria, que deleta os erros (mais detalhes podem ser encontrados em: https://docs.qgis.org/testing/en/docs/user_manual/processing_algs/qgis/fixgeometry.html). Entretanto, ao corrigir o erro, é possível que feições sejam deletadas ou que a área dos polígonos seja alterada. Para que o usuário tenha conhecimento dessas alterações, é recomendado que seja verificada a quantidade de feições e a área total antes e depois de executar a ferramenta Corrigir Geometrias. Para fazer essa verificação, calcular a área de cada feição utilizando a Calculadora de Campo da tabela de atributos (criar novo campo do tipo número decimal e inserir a expressão $area) depois selecionar a ferramenta de estatística básica dentro da opção Vetor → Analisar → Campo para estatística básica. Na janela da ferramenta, na opção Campo para calcular as estatísticas, selecionar o campo criado no passo anterior e executar. Na mesma janela de execução, os resultados da estatística são listados, o número de feições com área válida (valor diferente de zero) é reportado no item “Count” e a área total em “Sum”:
+ 
+
+A área reportada utilizando esse procedimento é a soma da área de todas as feições e não considera se os polígonos estão sobrepostos. Para o cálculo de área sem sobreposição de polígonos, utilizar o procedimento mais adequado descrito, por exemplo, nesta etapa. 
+Após essa verificação, a partir do painel de ferramentas, clique em Processamento → Caixa de Ferramentas, procure por Corrigir Geometria. Essa ferramenta identifica e corrige automaticamente inconsistências geométricas, como vértices sobrepostos, geometrias duplicadas ou interseções inválidas. Por padrão, o método de reparo utilizado é Estrutura, que soluciona a maioria dos problemas encontrados nas geometrias do arquivo. Caso esse método não resolva, é recomendado tentar novamente utilizando a opção Linework, que aplica um processo alternativo de correção. Após a execução da ferramenta, uma nova camada temporária será gerada contendo as geometrias corrigidas. Verificar a contagem de feições e área total no arquivo corrigido e comparar com os valores antes da correção. Para garantir que as modificações sejam preservadas, é recomendável salvar essa camada como um novo arquivo antes de prosseguir com as operações de geoprocessamento.
+	
+	
+
+7	Aplicação dos POPs no contexto REDD+ segundo abordagem do FREL nacional
+
+Os POPs apresentados neste item detalham algumas etapas para coletar dados de atividade e estoque de carbono usados nas estimativas de emissão de gases de efeito estufa, conforme o Nível de Referência de Emissões Florestais (FREL) nacional, que pode ser acessado em: < https://www.gov.br/mma/pt-br/composicao/secd/redd/central-de-conteudos/submissoes-de-redd-a-unfccc>. A submissão do FREL ao UNFCCC fixa a linha de base oficial de emissões por desmatamento e degradação florestal, elemento-chave para mensurar com transparência e acurácia as reduções relatadas pelo Brasil no âmbito do REDD+.
+Abaixo apresentamos o Procedimento Operacional Padrão para a obtenção desses dados para o bioma Amazônia. Neste POP, algumas etapas são apenas referenciadas, pois estão descritas na íntegra em seções anteriores neste mesmo relatório. Caso o usuário não tenha familiaridade com as operações de geoprocessamento, recomenda-se a leitura completa dos POPs descritos nas seções anteriores. 
+
+POP 7 - Obtenção de dados de atividade e estoque de carbono
+
+Procedimento Operacional Padrão 7
+Obtenção de dados de atividade e estoque de carbono
+Objetivo	Desenvolvimento e sistematização dos Procedimentos Operacionais Padrão (POPs) para desagregação dos dados nacionais do Programa de Monitoramento dos Biomas Brasileiros (BiomasBR).
+Produtos	Ao executar esse POP, o usuário adquirirá:
+•	Arquivo vetorial com as áreas de desmatamento (Prodes), em áreas de vegetação pretérita, com área e estoque de carbono dos polígonos;
+•	Arquivo vetorial com as áreas de degradação florestal por fogo (Deter) em áreas de vegetação pretérita em terras manejadas, com área e estoque de carbono dos polígonos;
+•	Arquivo vetorial com as áreas de degradação florestal por corte seletivo irregular (Deter) em áreas de vegetação pretérita, com área e estoque de carbono dos polígonos
+ 
+Descrição e Aquisição
+Dados Auxiliares	Para obtenção desse produto, é necessária a aquisição do Mapeamento da Vegetação Pretérita, dos limites das áreas de Terras Manejadas e o Mapa de Estimativa da Biomassa da Amazônia (EBA). 
+
+Mapeamento da Vegetação Pretérita:
+Segundo o FREL, este mapeamento apresenta a distribuição da vegetação pretérita natural nas diversas fitofisionomias dos biomas brasileiros, sem considerar a intervenção ou ocupação humana. Desenvolvido para o 4º Inventário Nacional de Emissões de Gases de Efeito Estufa (acesso em: https://repositorio.mctic.gov.br/handle/mctic/4782), o mapeamento teve como base principal o mapa de vegetação do IBGE (2017), com ajustes feitos pelo Serviço Florestal Brasileiro (SFB) para áreas antropizadas (Brasil, 2019) e comparações com o mapa utilizado no Terceiro Inventário Nacional de Emissões (MCTI, 2015 e Brasil, 2016). Esse mapa é utilizado no FREL para identificar e classificar as fitofisionomias em áreas de floresta e não floresta, uma vez que as estimativas de emissões são contabilizadas apenas em áreas florestais. 
+
+Terras Manejadas:
+O FREL segue as terminologias utilizadas no 4º Inventário Nacional de GEE (acesso em: https://repositorio.mctic.gov.br/handle/mctic/4782), na qual consideram Terras Manejadas como áreas de floresta (segundo o mapeamento de vegetação pretérita descrito acima) localizadas em áreas protegidas, como Unidades de Conservação - UCs e Terras Indígenas - TIs. Devido à falta de um banco de dados completo que abrange todos os fatores de emissão, o FREL nacional considera como degradação florestal a redução dos estoques de carbono em áreas de floresta que permanecem como floresta no bioma Amazônia, resultante de incêndios em terras florestais manejadas e de exploração madeireira desordenada.
+
+Aquisição da base de dados do 4º Inventário de Emissão de GEE:
+A aquisição do Mapeamento da Vegetação Pretérita e das Terras Manejadas utilizada no FREL nacinall pode ser feita através do portal SIRENE, que abriga a base de dados utilizada no Inventário Nacional de Emissões e Remoções Antrópicas de Gases de Efeito Estufa (acesso em: https://www.ccst.inpe.br/cn/). Após o registro do usuário na plataforma, os dados podem baixados em Visualizar Arquivos → 4 Inventario-CN → Shapes_UF. Selecione o estado de interesse e baixe os arquivos vetoriais listados. Para estados muito grandes, os arquivos foram recortados e separados numericamente. Para selecionar as áreas de vegetação pretérita, filtre o campo “cagrpret” pela classe “F” (floresta). As operações com terras manejadas neste contexto são feitas considerando apenas áreas de vegetação pretérita, portanto para filtrar ambas as classes, utilizar a fórmula: "cagrpret"  =  'F'  AND "uc_ti"  != 'NULL' para que as áreas classificadas como Terras Indígenas e Unidades de Conservação e também como Vegetação Natural Pretérita sejam mantidas. 
+Para acessar dados mais atualizados das Terras Indígenas e Unidades de Conservação, acesse as plataformas oficiais em: https://www.gov.br/funai/pt-br/atuacao/terras-indigenas/geoprocessamento-e-mapas/painel-terras-indigenas e https://www.gov.br/icmbio/pt-br/assuntos/dados_geoespaciais, respectivamente. 
+
+Estimativa de Biomassa na Amazônia:
+O FREL realiza estimativas de estoque de carbono utilizando o mapa de biomassa florestal da Amazônia, conhecido como Estimativa de Biomassa da Amazônia (EBA), desenvolvido pelo Centro de Ciência do Sistema Terrestre do Instituto Nacional de Pesquisas Espaciais (CCST/INPE) e publicado por Ometto et al. em 2023 (acesso em: https://www.nature.com/articles/s41597-023-02575-4). O mapa EBA apresenta valores de biomassa florestal acima do solo expressos em megagramas por hectare (Mg ha⁻¹) e foi desenvolvido com o objetivo de reduzir as incertezas associadas às estimativas de carbono para a Amazônia. O mapa EBA foi disponibilizado através do repositório Zenodo, no formato TIF e pode ser acessado no link: <https://zenodo.org/records/7647491>. 
+	
+	
+	
+BiomasBR	
+Os arquivos a seguir devem ser adquiridos dentro do recorte territorial Bioma Amazônia:
+
+Dados Auxiliares:
+●	Estados;
+
+Prodes:
+●	Incremento Anual de Desmatamento / supressão
+●	Incremento Anual de Desmatamento (polígonos entre 1 e 6,25 ha)
+
+Os arquivos a seguir devem ser adquiridos dentro do recorte territorial Amazônia Legal:
+
+Deter:
+●	Avisos de supressão e degradação em áreas de Floresta - Amazônia Legal
+	
+Processamento
+Filtragem e Desagregação dos Dados	
+Dados de Atividade - Desmatamento:
+
+●	Em ambas as camadas do Prodes (polígonos acima de 6,25ha e polígonos entre 1 e 6,25ha) adquiridas conforme a etapa anterior, execute o procedimento descrito em Seleção por ano-Prodes, para filtrar para o(s) ano(s) de interesse. 
+●	União das camadas filtradas 
+○	Com uma das camadas selecionadas, siga o seguinte caminho a partir do painel de ferramentas: Vetor → Geoprocessamento → União. Selecionar a outra camada como Camada de Sobreposição. 
+○	Execute o procedimento Desagregação dos arquivos vetoriais a nível subnacional para recortar para o estado de interesse.
+●	A contabilização da remoção do estoque de carbono por desmatamento no bioma Amazônia segundo FREL é feita nas áreas de vegetação natural pretérita. Para realizar essa operação, siga o seguinte caminho a partir do painel de ferramentas: Vetor → Geoprocessamento → Interseção. Na camada de entrada, selecionar a união das camadas do Prodes e na camada de sobreposição, selecionar a camada da base de dados do 4º Inventário filtrado para as áreas de vegetação pretérita.  A operação de interseção mantém todos os atributos das duas camadas, incluindo o campo “carpret” com a classe “F”, sinalizando que a camada resultante abrange apenas áreas de vegetação natural pretérita.
+
+Dados de Atividade – Degradação Florestal:
+
+●	Na camada adquirida conforme a etapa descrita em Descrição e Aquisição, execute o procedimento Seleção dos avisos por ano-Prodes, para filtrar para os anos de interesse. 
+●	No FREL, a contabilização da remoção do estoque de carbono é separada para degradação por corte irregular e por fogo. 
+○	A degradação por corte irregular é contabilizada para toda a jurisdição, em áreas de vegetação pretérita. Para fazer a filtragem por corte irregular, utilize o procedimento descrito em Seleção dos avisos por ano-Prodes e por tipo de degradação selecionando o(s) ano(s) de interesse e pelo tipo 'CS_DESORDENADO'. Para realizar o recorte com a área de vegetação natural pretérita, siga o seguinte caminho a partir do painel de ferramentas: Vetor → Geoprocessamento → Interseção. Na camada de entrada, selecionar a camada do Deter filtrada e na camada de sobreposição, selecionar a camada da base de dados do 4º Inventário filtrada para a área de vegetação pretérita. A operação de interseção mantém todos os atributos das duas camadas, incluindo a filtragem no campo “carpret”, sinalizando que a camada resultante abrange apenas as áreas de vegetação pretérita. Para desagregar a camada resultante ao nível subnacional, realizar o procedimento descrito em Desagregação dos arquivos vetoriais a nível subnacional. 
+○	A degradação por fogo é contabilizada somente nas áreas manejadas que ocorrem em áreas de vegetação natural pretérita. Para fazer a filtragem de degradação por fogo, utilize o procedimento descrito em Seleção dos avisos por ano-Prodes e por tipo de degradação selecionando o(s) ano(s) de interesse e pelo tipo 'CICATRIZ_DE_QUEIMADA'. Para realizar o recorte com áreas manejadas em áreas de vegetação natural pretérita, siga o seguinte caminho a partir do painel de ferramentas: Vetor → Geoprocessamento → Interseção. Na camada de entrada, selecionar a camada do Deter filtrada e na camada de sobreposição, selecionar a camada da base de dados do 4º Inventário filtrada para áreas manejadas e de vegetação pretérita ("cagrpret"  =  'F'  AND "uc_ti"  != 'NULL'). A operação de interseção mantém todos os atributos das duas camadas, incluindo a filtragem nos campos “uc_ti” e “carpret”, sinalizando que a camada resultante abrange apenas áreas de unidades de conservação ou terras indígenas, em áreas de vegetação pretérita. Para desagregar a camada resultante ao nível subnacional, realizar o procedimento descrito em Desagregação dos arquivos vetoriais a nível subnacional. 
+	
+	
+
+Cálculo do estoque de carbono	
+O mapa de EBA representa a estimativa de biomassa acima do solo no bioma Amazônia. Para converter os valores de biomassa em estoque de carbono, multiplique cada pixel pela fração de carbono indicada para florestas tropicais e subtropicais nas IPCC Guidelines for National Greenhouse Gas Inventories (2006), que é 0,47. No menu Raster → Calculadora Raster, selecione a banda do mapa EBA, acrescente “* 0.47” à expressão e execute o cálculo para gerar o mapa do estoque de carbono.
+Para calcular a média do estoque de carbono presentes no novo mapa EBA multiplicado pela fração de carbono) para os dados de desmatamento ou degradação, utiliza-se a ferramenta de Estatísticas Zonais. No painel de ferramentas, acesse Processamento → Caixa de Ferramentas → Estatísticas Zonais. Configure a ferramenta definindo a camada de desmatamento ou degradação de interesse como a Camada de Entrada e, em seguida, selecione a camada de EBA como a Camada Raster. É recomendado preencher a opção de Prefixo da camada de saída com, por exemplo, “EstCarb_” (abreviação de Estoque de Carbono) para facilitar a identificação do atributo após a operação. No parâmetro “Estatísticas a calcular”, é possível selecionar apenas o cálculo de interesse, ou manter todas as três possibilidades, contagem, soma e média. No contexto do FREL, a métrica de interesse é a média do estoque de carbono. A operação adiciona automaticamente os sufixos “count”, “sum” e “mean” no campo de cada métrica.  Ao término do processamento, a camada final conterá as métricas do estoque de carbono selecionadas para cada polígono de atividade.
+	
+Cálculo de área dos polígonos	A área dos polígonos pode ser calculada executando o procedimento descrito em Cálculo da área.
+Limpeza, Padronização e Exportação do Produto Final	Executar a limpeza, padronização e exportação dos resultados seguindo os procedimentos descritos em Limpeza, Padronização e Exportação dos arquivos vetoriais.
+
