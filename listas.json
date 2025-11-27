@@ -101,10 +101,10 @@
   "terraclass": {
     "anos": {
       "Amazônia": [2008, 2010, 2012, 2014, 2018, 2020, 2022],
-      "Cerrado": [2018, 2020, 2022]
+      "Cerrado": [2018, 2020, 2022, 2024]
     },
     "urls": {
-      "base": "https://www.terraclass.gov.br/helpers/terraclass_data4download_2024/V/",
+      "base": "https://www.terraclass.gov.br/download-de-dados/arquivos/V/",
       "municipal": "municipal/{uf_lower}/{bioma}.{ano}.{municipio_normalizado}.{UF}.{geocodigo_munic}.V.zip",
       "estadual": "estadual/{bioma}.{ano}.{estado_normalizado}.{geocodigo_uf}.V.zip"
     }
