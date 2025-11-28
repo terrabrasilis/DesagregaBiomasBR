@@ -1231,7 +1231,7 @@ class DesagregaBiomasBRDialog(QDialog):
         self.radio_no_cut = QRadioButton("Sem limite de corte (todo o bioma/região)")
         self.radio_loaded_layer = QRadioButton("Usar layer já carregado no QGIS")
         self.radio_draw = QRadioButton("Desenhar na tela")
-        self.radio_ibge = QRadioButton(f"Limites IBGE ({self.ibge_shapefile_name})")
+        self.radio_ibge = QRadioButton(f"Limites IBGE (BC250)")
         
         self.cut_button_group.addButton(self.radio_no_cut, 0)
         self.cut_button_group.addButton(self.radio_loaded_layer, 1)

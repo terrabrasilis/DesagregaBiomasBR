@@ -2,7 +2,7 @@
 name=DesagregaBiomasBR
 qgisMinimumVersion=3.0
 description=Assistente para seleção e desagregação de dados ambientais brasileiros (PRODES, DETER, TERRACLASS, ÁREA QUEIMADA)
-version=1.0
+version=1.1
 author= Denilson Passo
 email=geodenilson@gmail.com
 

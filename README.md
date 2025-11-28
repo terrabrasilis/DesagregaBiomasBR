@@ -355,9 +355,18 @@ Para detalhes completos, consulte o arquivo [LICENSE](LICENSE) neste repositóri
 
 Este plugin é desenvolvido para facilitar o acesso aos dados públicos de monitoramento ambiental brasileiro, respeitando as licenças e termos de uso das instituições fornecedoras dos dados.
 
-## 🆕 **Versão Atual: 1.0**
+## 🆕 **Versão Atual: 1.1**
 
-### Novidades principais:
+### Novidades da versão 1.1:
+- 🗺️ **Shapefile IBGE atualizado** - Base Cartográfica Contínua 2025 (BC250)
+- 🔧 **Correção PRODES Amazônia** - Usa WFS da Amazônia Legal para evitar perda de polígonos
+- 🎨 **Estilo TerraClass corrigido** - Todas as 16 classes agora são exibidas corretamente
+- ✅ **Checkbox "Dissolver dados"** - Opção para ÁREA QUEIMADA anual agora é configurável
+- 🖥️ **Interface melhorada** - Botões reorganizados após conclusão do processamento
+- 📐 **Layout estável** - Corrigido problema de compressão quando barra de progresso aparece
+- 🆕 **Botão "Novo Processamento"** - Reset completo para iniciar novo trabalho
+
+### Funcionalidades principais:
 - ✨ **Sistema de configuração dinâmica** - URLs e parâmetros sempre atualizados
 - 🚀 **Download automático de dependências** - Shapefile IBGE baixado automaticamente
 - 🔄 **Cache inteligente** - Funciona offline com dados em cache
