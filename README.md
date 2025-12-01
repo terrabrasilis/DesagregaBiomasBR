@@ -2,7 +2,9 @@
 
 ## 📋 Descrição
 
-Elaborado no âmbito do Programa AIM4Forests, pela FAO e INPE, o Plugin que oferece um assistente guiado para seleção e desagregação de dados ambientais brasileiros por região ou recorte espacial. Facilita o acesso e processamento de dados oficiais dos principais sistemas de monitoramento ambiental do Programa BiomasBR: PRODES (desmatamento), DETER (alertas), TERRACLASS (uso da terra) e ÁREA QUEIMADA (queimadas). Inclui opções avançadas de corte espacial e múltiplos formatos de saída.
+> 🌍 **Esta ferramenta foi desenvolvida conjuntamente pela Organização das Nações Unidas para Alimentação e Agricultura (FAO) e pelo Instituto Nacional de Pesquisas Espaciais (INPE), no âmbito do programa AIM4Forests: Acelerando o Monitoramento Inovador para Florestas, com apoio financeiro do Departamento de Segurança Energética e Net Zero do Reino Unido da Grã-Bretanha e Irlanda do Norte.**
+
+Plugin que oferece um assistente guiado para seleção e desagregação de dados ambientais brasileiros por região ou recorte espacial. Facilita o acesso e processamento de dados oficiais dos principais sistemas de monitoramento ambiental do Programa BiomasBR: PRODES (desmatamento), DETER (alertas), TERRACLASS (uso da terra) e ÁREA QUEIMADA (queimadas). Inclui opções avançadas de corte espacial e múltiplos formatos de saída.
 
 ## 🎯 Funcionalidades Principais
 
